@@ -125,7 +125,8 @@ app.post('/edit/:book_id', (req, res) => {
   )
 })
 
-// ポート3000でアクセスを待ち受ける
-app.listen(3000, () => {
-  console.log("running port 3000");
-});
+// 指定ポートでアクセスする
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("listening server")
+})
