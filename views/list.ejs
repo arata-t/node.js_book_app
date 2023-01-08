@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>トップ</title>
+  <link rel="stylesheet" type="text/html" href="/css/style.css">
+  <script src="/send_url.js" type="text/html"></script>
+</head>
+
+<body>
+  <header>
+    <div class="header-nav">
+      <a href="/">BOOKLIST</a>
+      <ul>
+        <li><a href="/">記事一覧</a></li>
+      </ul>
+    </div>
+    <p>読書リスト</p>
+  </header>
+  <main>
+    <div>
+      <h3>
+        <a href="/new">新規作成</a>
+      </h3>
+    </div>
+    <ul class="list">
+      <% books.forEach((book)=> { %>
+        <li>
+          <h2>
+            <%= book.book_title %>
+          </h2>
+          <p>
+            <%= book.finished_date %>
+          </p>
+          <a href="/book/<%= book.book_id%>">続きを読む</a>
+          <form action="/delete/<%=book.book_id%>" method="post">
+            <input id="delete" type="submit" value="削除">
+          </form>
+        </li>
+        <% }) %>
+    </ul>
+  </main>
+</body>
+
+<script>
+  var btn = document.getElementById('delete');
+</script>
+
+</html>

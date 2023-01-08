@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>BOOK LIST</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/send_url.js"></script>
+</head>
+
+<body>
+  <header>
+    <a href="/" class="header-logo">BOOK LIST</a>
+  </header>
+  <div class="container">
+    <div class="container-header">
+      <h1>新しい本を追加</h1>
+    </div>
+    <div class="item-form-wrapper">
+
+      <form action="/create" method="post">
+
+        <p class="form-label">本のタイトル</p>
+        <input type="text" name="book_title" maxlength="50">
+
+        <p class="form-label">読了日</p>
+        <input type="date" name="finished_date">
+
+        <p class="form-label">分類</p>
+        <input type="text" name="classification" maxlength="20">
+
+        <p class="form-label">気になる一言</p>
+        <input type="text" name="worried_word" maxlength="50">
+
+        <p class="form-label">内容</p>
+        <input type="text" name="contents" maxlength="500">
+
+        <input type="submit" value="作成する">
+
+      </form>
+    </div>
+    <a href="/" class="cancel-button">もどる</a>
+  </div>
+</body>
+
+</html>
