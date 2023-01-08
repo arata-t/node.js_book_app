@@ -10,3 +10,9 @@ node.jsはrailsのようにheroku上でdb:migrateできないため、ヘロク�
 そのため、コードにherokuのclearDBの設定を書き込む必要があるが、
 herokuサーバーを立ち上げないとDBが動かないので、意味なし、
 一旦やめ
+
+つまったこと
+１。Procfileが必要
+２。rootブランチ（main）でデプロイする
+３。packege.jsonに"start": "node app.js",が必要
+４。const PORT = process.env.PORT || 3000;が必要
