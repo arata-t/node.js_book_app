@@ -23,7 +23,8 @@
     "url": "https://github.com/arata-t/node.js_book_app/issues"
   },
   "engines": {
-    "node": "14.20.0"
+    "node": "14.20.0",
+    "npm": "6.14.17"
   },
   "homepage": "https://github.com/arata-t/node.js_book_app#readme"
 }
