@@ -16,3 +16,6 @@ herokuサーバーを立ち上げないとDBが動かないので、意味なし
 ２。rootブランチ（main）でデプロイする
 ３。packege.jsonに"start": "node app.js",が必要
 ４。const PORT = process.env.PORT || 3000;が必要
+
+ 参考になりそうなサイト
+ https://zenn.dev/toshi_h/articles/c3e3df74d6ceb8897c9d
