@@ -1,0 +1,22 @@
+* input {
+  margin-top: 5px;
+}
+
+#edit_page .item-form-wrapper .worried_word,
+#new_page .item-form-wrapper .worried_word {
+  width: 400px;
+}
+
+
+#edit_page .item-form-wrapper .text_contents,
+#new_page .item-form-wrapper .text_contents {
+  vertical-align: top;
+  width: 80VW;
+  height: 150px;
+  line-height: 1.5;
+}
+
+.form_button,
+.cancel-button {
+  margin-top: 20px;
+}
