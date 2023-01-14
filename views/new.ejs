@@ -5,14 +5,14 @@
   <meta charset="utf-8">
   <title>BOOK LIST</title>
   <link rel="stylesheet" href="/css/style.css">
-  <script src="/send_url.js"></script>
+  <script src="/send_url.js" type="text/html"></script>
 </head>
 
 <body>
   <header>
     <a href="/" class="header-logo">BOOK LIST</a>
   </header>
-  <div class="container">
+  <div id="new_page">
     <div class="container-header">
       <h1>新しい本を追加</h1>
     </div>
@@ -30,16 +30,19 @@
         <input type="text" name="classification" maxlength="20">
 
         <p class="form-label">気になる一言</p>
-        <input type="text" name="worried_word" maxlength="50">
+        <input type="text" name="worried_word" maxlength="50" class="worried_word">
 
         <p class="form-label">内容</p>
-        <input type="text" name="contents" maxlength="500">
+        <input type="text" name="contents" maxlength="500" class="text_contents">
 
-        <input type="submit" value="作成する">
+        <br>
+        <input type="submit" class="form_button" value="作成する">
 
       </form>
     </div>
-    <a href="/" class="cancel-button">もどる</a>
+    <div class="cancel-button">
+      <a href="/">もどる</a>
+    </div>
   </div>
 </body>
 

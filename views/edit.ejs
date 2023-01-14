@@ -5,14 +5,14 @@
   <meta charset="utf-8">
   <title>BOOK LIST</title>
   <link rel="stylesheet" href="/css/style.css">
-  <script src="/send_url.js"></script>
+  <script src="/send_url.js" type="text/html"></script>
 </head>
 
 <body>
   <header>
     <a href="/" class="header-logo">BOOK LIST</a>
   </header>
-  <div class="container">
+  <div id="edit_page">
     <div class="container-header">
       <h1>登録した本の編集</h1>
     </div>
@@ -21,25 +21,28 @@
       <form action="/edit/<%=book.book_id%>" method="post">
 
         <p class="form-label">本のタイトル</p>
-        <input type="text" name="book_title" maxlength="50" value="book.book_title">
+        <input type="text" name="book_title" maxlength="50" value=<%=book.book_title%>>
 
         <p class="form-label">読了日</p>
-        <input type="date" name="finished_date" value="book.finished_date">
+        <input type="date" name="finished_date" value=<%=book.finished_date%>>
 
         <p class="form-label">分類</p>
-        <input type="text" name="classification" maxlength="20" value="book.classification">
+        <input type="text" name="classification" maxlength="20" value=<%=book.classification%> >
 
         <p class="form-label">気になる一言</p>
-        <input type="text" name="worried_word" maxlength="50" value="book.worried_word">
+        <input type="text" name="worried_word" maxlength="50" class="worried_word" value=<%=book.worried_word%>>
 
         <p class="form-label">内容</p>
-        <input type="text" name="contents" maxlength="500" value="book.contents">
+        <textarea name="contents" maxlength="500" class="text_contents"><%=book.contents%></textarea>
 
-        <input type="submit" value="編集する">
+        <br>
+        <input type="submit" class="form_button" value="編集する">
 
       </form>
     </div>
-    <a href="/" class="cancel-button">もどる</a>
+    <div class="cancel-button">
+      <a href="/">もどる</a>
+    </div>
   </div>
 </body>
 
