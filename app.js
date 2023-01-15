@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
         return;
       } else {
         // 時間をフォーマット
-        results[0].finished_date = moment(results[0].finished_date).format('YYYY/MM/DD')
+        results[0].finished_date = moment(results[0].finished_date).format('YYYY-MM-DD')
         res.render("list.ejs", { books: results });
       }
     }
@@ -51,7 +51,7 @@ app.get('/book/:book_id', (req, res) => {
         console.log('get book_list' + error);
       } else {
         // 時間をフォーマット
-        results[0].finished_date = moment(results[0].finished_date).format('YYYY/MM/DD')
+        results[0].finished_date = moment(results[0].finished_date).format('YYYY-MM-DD')
         console.log('get book_list' + results);
         res.render('book.ejs', { book: results[0] })
       }
