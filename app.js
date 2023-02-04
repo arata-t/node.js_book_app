@@ -1,6 +1,8 @@
+
 const express = require("express");
 const app = express();
 const mysql = require('mysql');
+const moment = require('moment');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
@@ -9,7 +11,6 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'localhost',
   password: 'Itotaniguro@01',
-  port: 3306,
   database: 'book_app'
 });
 
@@ -26,7 +27,8 @@ app.get("/", (req, res) => {
         console.log('get root' + error);
         return;
       } else {
-        console.log('get root' + results);
+        // 時間をフォーマット
+        results[0].finished_date = moment(results[0].finished_date).format('YYYY-MM-DD')
         res.render("list.ejs", { books: results });
       }
     }
@@ -48,6 +50,8 @@ app.get('/book/:book_id', (req, res) => {
       if (error) {
         console.log('get book_list' + error);
       } else {
+        // 時間をフォーマット
+        results[0].finished_date = moment(results[0].finished_date).format('YYYY-MM-DD')
         console.log('get book_list' + results);
         res.render('book.ejs', { book: results[0] })
       }
@@ -65,7 +69,9 @@ app.get('/edit/:book_id', (req, res) => {
         console.log('get edit' + error);
         return;
       } else {
-        console.log('get edit' + results);
+        // 時間をフォーマット
+        results[0].finished_date = moment(results[0].finished_date).format('YYYY-MM-DD')
+        console.log('get edit' + results[0]);
         res.render('edit.ejs', { book: results[0] })
       }
     }
