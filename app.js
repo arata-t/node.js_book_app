@@ -28,7 +28,9 @@ app.get("/", (req, res) => {
         return;
       } else {
         // 時間をフォーマット
-        results[0].finished_date = moment(results[0].finished_date).format('YYYY-MM-DD')
+        results.forEach(result => {
+          result.finished_date = moment(result.finished_date).format('YYYY-MM-DD')
+        });
         res.render("list.ejs", { books: results });
       }
     }
