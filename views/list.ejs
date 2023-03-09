@@ -8,6 +8,10 @@
   <title>トップ</title>
   <link rel="stylesheet" type="text/html" href="/css/style.css">
   <script src="/send_url.js" type="text/html"></script>
+
+  <!-- ejsファイルにthree.jsライブラリを追加する -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 </head>
 
 <body>
@@ -47,6 +51,37 @@
 
 <script>
   var btn = document.getElementById('delete');
+</script>
+
+<script>
+  // 3Dシーンを作成
+  var scene = new THREE.Scene();
+
+  // カメラを作成
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+  // レンダラーを作成
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // 立方体を作成
+  var geometry = new THREE.BoxGeometry();
+  var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  var cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+
+  // カメラを移動
+  camera.position.z = 5;
+
+  // アニメーションを開始
+  function animate () {
+    requestAnimationFrame(animate);
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    renderer.render(scene, camera);
+  }
+  animate();
 </script>
 
 </html>
