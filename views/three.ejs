@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>トップ</title>
+  <link rel="stylesheet" type="text/html" href="/css/style.css">
+  <script src="/send_url.js" type="text/html"></script>
+  <!-- <script src="/js/three.js" type="text/js"></script> -->
+  <% const fontPath='/fonts/Rounded Mplus 1c_Regular.json' ; %>
+
+
+    <!-- ejsファイルにthree.jsライブラリを追加する -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/controls/OrbitControls.js"></script>
+
+</head>
+
+<body></body>
+
+<script type="module">
+
+  window.onload = function init () {
+
+    var books = '<%= (JSON.stringify(books)) %>';
+
+    books = JSON.parse(books.replace(/&#34;/g, '"'))
+
+    console.log(JSON.stringify(books));
+
+
+    // 3Dシーンを作成
+    var scene = new THREE.Scene();
+
+    // カメラを作成
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    // レンダラーを作成
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 立方体を作成
+    // var geometry = new THREE.BoxGeometry();
+    // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    // var cube = new THREE.Mesh(geometry, material);
+    // scene.add(cube);
+
+    // fontloaderを実装
+    const loader = new THREE.FontLoader();
+    const font = loader.load('<%= fontPath %>', function (font) {
+      const textGeometry = new THREE.TextGeometry(books[0].book_title, {
+        font: font,
+        size: 10,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 1,
+        bevelSize: 0.5,
+        bevelOffset: 0,
+        bevelSegments: 3
+      });
+
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const textMesh = new THREE.Mesh(textGeometry, material);
+      scene.add(textMesh);
+    });
+
+    // カメラを移動
+    camera.position.z = 5;
+
+    // カメラコントローラーを作成
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    // 滑らかにカメラコントローラーを制御する
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.2;
+
+    // アニメーションを開始
+    function animate () {
+      requestAnimationFrame(animate);
+      // cube.rotation.x += 0.01;
+      // cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+</script>
+
+</html>

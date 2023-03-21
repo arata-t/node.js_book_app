@@ -54,34 +54,44 @@
 </script>
 
 <script>
-  // 3Dシーンを作成
-  var scene = new THREE.Scene();
 
-  // カメラを作成
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  window.onload = function init () {
 
-  // レンダラーを作成
-  var renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
+    var books = '<%=books%>';
+    books.forEach(element => {
+      console.log(element.book_title)
+    });
 
-  // 立方体を作成
-  var geometry = new THREE.BoxGeometry();
-  var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  var cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+    // 3Dシーンを作成
+    var scene = new THREE.Scene();
 
-  // カメラを移動
-  camera.position.z = 5;
+    // カメラを作成
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-  // アニメーションを開始
-  function animate () {
-    requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    renderer.render(scene, camera);
+    // レンダラーを作成
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // 立方体を作成
+    var geometry = new THREE.BoxGeometry();
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    // カメラを移動
+    camera.position.z = 5;
+
+    // アニメーションを開始
+    function animate () {
+      requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    }
+    animate();
   }
-  animate();
+
 </script>
 
 </html>

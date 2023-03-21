@@ -133,6 +133,22 @@ app.post('/edit/:book_id', (req, res) => {
   )
 })
 
+// three.jsへ移動
+app.get('/three', (req, res) => {
+  const books = [
+    {
+      book_title: 'brave_new_world',
+      message: 'this_is_book'
+    },
+    {
+      book_title: '吾輩は猫である',
+      message: 'this_is_book'
+    }
+  ]
+    ;
+  res.render('three.ejs', { books });
+});
+
 // 指定ポートでアクセスする
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
