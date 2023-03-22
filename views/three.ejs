@@ -8,28 +8,41 @@
   <title>トップ</title>
   <link rel="stylesheet" type="text/html" href="/css/style.css">
   <script src="/send_url.js" type="text/html"></script>
-  <!-- <script src="/js/three.js" type="text/js"></script> -->
+
+  <!-- フォントの読み込み -->
   <% const fontPath='/fonts/Rounded Mplus 1c_Regular.json' ; %>
 
 
     <!-- ejsファイルにthree.jsライブラリを追加する -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
+
 
 </head>
 
-<body></body>
+<div id="stats_output">
+</div>
+
+<body id="visual_area"></body>
 
 <script type="module">
 
-  window.onload = function init () {
+  // 最初にFontloaderを読み込む必要がある
+  window.onload = function loadFonts () {
+    const fontLoader = new THREE.FontLoader();
+    fontLoader.load('<%= fontPath %>', function (font) {
+      init(font);
+    })
+  }
+
+  function init (font) {
 
     var books = '<%= (JSON.stringify(books)) %>';
-
     books = JSON.parse(books.replace(/&#34;/g, '"'))
-
     console.log(JSON.stringify(books));
 
+    var font = font;
 
     // 3Dシーンを作成
     var scene = new THREE.Scene();
@@ -42,47 +55,68 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // 立方体を作成
-    // var geometry = new THREE.BoxGeometry();
-    // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // var cube = new THREE.Mesh(geometry, material);
-    // scene.add(cube);
+    // テキストオブジェクトの宣言
+    var textMesh;
 
-    // fontloaderを実装
-    const loader = new THREE.FontLoader();
-    const font = loader.load('<%= fontPath %>', function (font) {
-      const textGeometry = new THREE.TextGeometry(books[0].book_title, {
-        font: font,
-        size: 10,
-        height: 5,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 1,
-        bevelSize: 0.5,
-        bevelOffset: 0,
-        bevelSegments: 3
-      });
+    // テキストジオメトリのGUIを作成
+    var controls = new function () {
+      this.size = 10;
+      this.height = 5;
+      this.curveSegments = 3;
+      this.bevelEnabled = false;
+      this.bevelThickness = 1;
+      this.bevelSize = 0.5;
+      this.bevelOffset = 0;
+      this.bevelSegments = 0;
 
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const textMesh = new THREE.Mesh(textGeometry, material);
-      scene.add(textMesh);
-    });
+      this.generateGeom = function () {
+        // 最初に削除しないとオブジェクトが生成され続けててしまう
+        // 例：heightを上げたら下がらない
+        scene.remove(textMesh);
+
+        // textGeometoryのオプションを設定
+        var options = {
+          font: font,
+          size: controls.size,
+          height: controls.height,
+          curveSegments: controls.curveSegments,
+          bevelEnabled: true,
+          bevelThickness: controls.bevelThickness,
+          bevelSize: controls.bevelSize,
+          bevelOffset: controls.bevelOffset,
+          bevelSegments: controls.bevelSegments
+        }
+        var textGeometry = new THREE.TextGeometry(books[0].book_title, options);
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        textMesh = new THREE.Mesh(textGeometry, material);
+        scene.add(textMesh);
+      }
+    };
+    controls.generateGeom()
+
+    // GUIのプロパティを作成
+    const gui = new dat.GUI();
+    gui.add(controls, 'size', 5, 100).onChange(controls.generateGeom);
+    gui.add(controls, 'height', 0.1, 10).onChange(controls.generateGeom);
+    gui.add(controls, 'curveSegments', 0.1, 5).onChange(controls.generateGeom);
+    gui.add(controls, 'bevelThickness', 0.1, 5).onChange(controls.generateGeom);
+    gui.add(controls, 'bevelSize', 0.01, 3).onChange(controls.generateGeom);
+    gui.add(controls, 'bevelOffset', -5, 0).onChange(controls.generateGeom);
+    gui.add(controls, 'bevelSegments', 0, 1).onChange(controls.generateGeom);
 
     // カメラを移動
     camera.position.z = 5;
 
     // カメラコントローラーを作成
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    const orbit = new THREE.OrbitControls(camera, renderer.domElement);
 
     // 滑らかにカメラコントローラーを制御する
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.2;
+    orbit.enableDamping = true;
+    orbit.dampingFactor = 0.2;
 
     // アニメーションを開始
     function animate () {
       requestAnimationFrame(animate);
-      // cube.rotation.x += 0.01;
-      // cube.rotation.y += 0.01;
       renderer.render(scene, camera);
     }
     animate();
