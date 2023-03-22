@@ -28,11 +28,18 @@
 
 <script type="module">
 
+  var camera;
+  var scene;
+  var renderer;
+
+
   // 最初にFontloaderを読み込む必要がある
   window.onload = function loadFonts () {
     const fontLoader = new THREE.FontLoader();
     fontLoader.load('<%= fontPath %>', function (font) {
       init(font);
+      // 画面の拡大縮小に対応
+      window.addEventListener('resize', onResize, false);
     })
   }
 
@@ -45,13 +52,13 @@
     var font = font;
 
     // 3Dシーンを作成
-    var scene = new THREE.Scene();
+    scene = new THREE.Scene();
 
     // カメラを作成
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     // レンダラーを作成
-    var renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
@@ -122,6 +129,12 @@
     animate();
   }
 
+  // 画面のリサイズ対応
+  function onResize () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
 </script>
 
 </html>
