@@ -135,18 +135,21 @@ app.post('/edit/:book_id', (req, res) => {
 
 // three.jsへ移動
 app.get('/three', (req, res) => {
-  const books = [
-    {
-      book_title: 'brave_new_world',
-      message: 'this_is_book'
-    },
-    {
-      book_title: '吾輩は猫である',
-      message: 'this_is_book'
+  connection.query(
+    'SELECT * FROM tb_book',
+    (error, results) => {
+      if (error) {
+        console.log('get root' + error);
+        return;
+      } else {
+        // 時間をフォーマット
+        results.forEach(result => {
+          result.finished_date = moment(result.finished_date).format('YYYY-MM-DD')
+        });
+        res.render("three.ejs", { books: results });
+      }
     }
-  ]
-    ;
-  res.render('three.ejs', { books });
+  )
 });
 
 // 指定ポートでアクセスする

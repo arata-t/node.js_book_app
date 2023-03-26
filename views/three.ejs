@@ -45,9 +45,12 @@
 
   function init (font) {
 
-    var books = '<%= (JSON.stringify(books)) %>';
-    books = JSON.parse(books.replace(/&#34;/g, '"'))
-    console.log(JSON.stringify(books));
+    var escapedArray = '<%= (JSON.stringify(books)) %>';
+    // エスケープを解除する
+    var sub_escape_array = escapedArray.replace(/&#34;/g, '"').replace(/(\r\n|\r|\n)/g, "\\n");
+
+    var unescapedBooks = JSON.parse(sub_escape_array);
+    console.log(unescapedBooks);
 
     var font = font;
 
@@ -67,8 +70,8 @@
 
     // テキストジオメトリのGUIを作成
     var controls = new function () {
-      this.size = 10;
-      this.height = 5;
+      this.size = 50;
+      this.height = 1;
       this.curveSegments = 3;
       this.bevelEnabled = false;
       this.bevelThickness = 1;
@@ -93,7 +96,7 @@
           bevelOffset: controls.bevelOffset,
           bevelSegments: controls.bevelSegments
         }
-        var textGeometry = new THREE.TextGeometry(books[0].book_title, options);
+        var textGeometry = new THREE.TextGeometry(unescapedBooks[0].book_title, options);
         var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         textMesh = new THREE.Mesh(textGeometry, material);
         scene.add(textMesh);
