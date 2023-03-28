@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * 表示するできすとのモデルを生成するクラス
+ * 表示するテキストモデルを生成するクラス
  * @param {object} font フォントの情報
  */
 class TextModel {

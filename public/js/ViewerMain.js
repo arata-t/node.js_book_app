@@ -1,6 +1,5 @@
 import TextModel from "./TextModel.js";
 
-
 /**
  * viewer_frontから呼び出されるviewのメイン処理クラス
  */
@@ -18,9 +17,6 @@ class ViewerMain {
     /**  @type {object} レンダラーに関する情報 */
     this.renderer = '';
 
-    this.unescapedBooks = [
-      { book_title: 'ブックタイトル' },
-    ]
   }
 
   /**
@@ -74,17 +70,32 @@ class ViewerMain {
 
     // テキストのモデルを作成
     const textModel = new TextModel(this.font);
-    const textMesh = await textModel.generateMesh();
+    // textMeshはGUIで可変なためletで定義
+    let textMesh = await textModel.generateMesh();
     this.scene.add(textMesh);
 
-    // // GUIのプロパティを作成
-    // const gui = new dat.GUI();
-    // gui.add(controls, 'size', 5, 100).onChange(controls.generateGeom);
-    // gui.add(controls, 'height', 0.1, 10).onChange(controls.generateGeom);
-    // gui.add(controls, 'curveSegments', 0.1, 5).onChange(controls.generateGeom);
-    // gui.add(controls, 'bevelThickness', 0.1, 5).onChange(controls.generateGeom);
-    // gui.add(controls, 'bevelSize', 0.01, 3).onChange(controls.generateGeom);
-    // gui.add(controls, 'bevelOffset', -5, 0).onChange(controls.generateGeom);
+    // GUIのプロパティを定義、可変のためlet
+    let guiProperties = [
+      { name: "size", min: 5, max: 100 },
+      { name: "height", min: 0.1, max: 10 },
+      { name: "curveSegments", min: 0.1, max: 5 },
+      { name: "bevelThickness", min: 0.1, max: 5 },
+      { name: "bevelSize", min: 0.01, max: 3 },
+      { name: "bevelOffset", min: -5, max: 0 }
+    ];
+
+    // GUIを作成
+    const gui = new dat.GUI();
+    guiProperties.forEach(property => {
+      gui.add(textModel, property.name, property.min, property.max).onChange(() => {
+        textModel.generateMesh().then(mesh => {
+          // 既存のtextMeshを更新
+          this.scene.remove(textMesh);
+          textMesh = mesh;
+          this.scene.add(textMesh);
+        });
+      });
+    });
 
     // カメラコントローラーを作成
     const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
