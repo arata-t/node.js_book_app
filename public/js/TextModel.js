@@ -6,24 +6,42 @@
  */
 class TextModel {
   constructor(font) {
+    /** @type {object} フォントの情報 */
     this.font = font;
+
+    /** @type {number} テキストサイズ */
     this.size = 50;
+
+    /** @type {number} 押し出される深さ */
     this.height = 1;
+
+    /** @type {number} 押し出すときのセグメント */
     this.curveSegments = 3;
+
+    /** @type {number} ベベルを追加するかどうか */
     this.bevelEnabled = false;
+
+    /** @type {number} ベベルの深さ */
     this.bevelThickness = 1;
+
+    /** @type {number} ベベルの高さ */
     this.bevelSize = 0.5;
+
+    /** @type {number}  */
     this.bevelOffset = 0;
-    this.bevelSegments = 0;
-    this.textMesh = null;
+
   }
 
-  generateGeom (bookTitle) {
-    if (this.textMesh !== null) {
-      this.textMesh.parent.remove(this.textMesh);
-    }
+  /**
+   * テキストモデルのメッシュを作成する
+   * @returns {object} textMesh textMeshオブジェクト
+   */
+  async generateMesh () {
+    // bookオブジェクトを取得
+    const books = await this.getBook();
 
-    var options = {
+    // テキストジオメトリのオプションを設定
+    const options = {
       font: this.font,
       size: this.size,
       height: this.height,
@@ -32,14 +50,31 @@ class TextModel {
       bevelThickness: this.bevelThickness,
       bevelSize: this.bevelSize,
       bevelOffset: this.bevelOffset,
-      bevelSegments: this.bevelSegments,
     };
-    var textGeometry = new THREE.TextGeometry(bookTitle, options);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    this.textMesh = new THREE.Mesh(textGeometry, material);
-
-    return this.textMesh;
+    const textGeometry = new THREE.TextGeometry(books[0].book_title, options);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const textMesh = new THREE.Mesh(textGeometry, material);
+    return textMesh;
   }
+
+  /**
+   * サーバーからブックオブジェクトを取得
+   * @returns {object} bookオブジェクトのデータ
+   */
+  async getBook () {
+    try {
+      const response = await fetch('/api/data');
+      if (!response.ok) {
+        throw new Error('Error:', response.statusText);
+      }
+      const data = await response.json();
+      // サーバーから値を取得できたら返却する
+      return data;
+    } catch (error) {
+      alert('ブックオブジェクトの取得に失敗しました。');
+    }
+  }
+
 }
 
 export { TextModel as default };

@@ -23,13 +23,17 @@ class ViewerMain {
     ]
   }
 
+  /**
+   * ビューアーを初期化する
+   * Bookの情報をThree.jsでモデリング化する処理などを書く
+   */
   async init () {
-    // Bookの情報をThree.jsでモデリング化する処理などを書く
 
     // 最初にFontloaderを読み込む必要がある
     const fontLoader = new THREE.FontLoader();
     fontLoader.load('../fonts/Rounded Mplus 1c_Regular.json', (font) => {
 
+      // フォントに関する情報
       this.font = font;
 
       // ビューアーを生成する
@@ -43,7 +47,6 @@ class ViewerMain {
 
   /**
    * 画面をリサイズする
-   * return void
    */
   onResize = async () => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -55,11 +58,6 @@ class ViewerMain {
    * ビューアーを起動する
    */
   async generateViewer () {
-    // const escapedArray = books; //現時点ではサーバーから値が入ってこない
-    // エスケープを解除する
-    // const sub_escape_array = escapedArray.replace(/&#34;/g, '"').replace(/(\r\n|\r|\n)/g, "\\n");
-
-    // var unescapedBooks = JSON.parse(sub_escape_array);
 
     // 3Dシーンを作成
     this.scene = new THREE.Scene();
@@ -75,8 +73,8 @@ class ViewerMain {
     document.getElementById("viewer_front").appendChild(this.renderer.domElement);
 
     // テキストのモデルを作成
-    var textModel = new TextModel(this.font);
-    var textMesh = textModel.generateGeom(this.unescapedBooks[0].book_title);
+    const textModel = new TextModel(this.font);
+    const textMesh = await textModel.generateMesh();
     this.scene.add(textMesh);
 
     // // GUIのプロパティを作成
@@ -87,7 +85,6 @@ class ViewerMain {
     // gui.add(controls, 'bevelThickness', 0.1, 5).onChange(controls.generateGeom);
     // gui.add(controls, 'bevelSize', 0.01, 3).onChange(controls.generateGeom);
     // gui.add(controls, 'bevelOffset', -5, 0).onChange(controls.generateGeom);
-    // gui.add(controls, 'bevelSegments', 0, 1).onChange(controls.generateGeom);
 
     // カメラコントローラーを作成
     const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -95,8 +92,11 @@ class ViewerMain {
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.2;
 
-    // アニメーションを開始
-    var animate = () => {
+    /**
+     * アニメーションを実行する
+     *
+     */
+    const animate = () => {
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }

@@ -135,6 +135,11 @@ app.post('/edit/:book_id', (req, res) => {
 
 // three.jsへ移動
 app.get('/three', (req, res) => {
+  res.render("three.ejs");
+});
+
+// 登録したbookの情報をフロントに返却する
+app.get('/api/data', (req, res) => {
   connection.query(
     'SELECT * FROM tb_book',
     (error, results) => {
@@ -146,11 +151,12 @@ app.get('/three', (req, res) => {
         results.forEach(result => {
           result.finished_date = moment(result.finished_date).format('YYYY-MM-DD')
         });
-        res.render("three.ejs", { books: results });
+        // 取得したbookオブジェクトをフロント側に返却
+        res.send(results);
       }
     }
   )
-});
+})
 
 // 指定ポートでアクセスする
 const PORT = process.env.PORT || 3000;
