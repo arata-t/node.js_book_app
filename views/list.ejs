@@ -23,7 +23,7 @@
         <li><a href="/three">Three.jsにジャンプ</li>
       </ul>
     </div>
-    <p>読書リスト</p>z
+    <p>読書リスト</p>
   </header>
   <main>
     <div>
@@ -52,47 +52,6 @@
 
 <script>
   var btn = document.getElementById('delete');
-</script>
-
-<script>
-
-  window.onload = function init () {
-
-    var books = '<%=books%>';
-    books.forEach(element => {
-      console.log(element.book_title)
-    });
-
-    // 3Dシーンを作成
-    var scene = new THREE.Scene();
-
-    // カメラを作成
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-    // レンダラーを作成
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    // 立方体を作成
-    var geometry = new THREE.BoxGeometry();
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    var cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-
-    // カメラを移動
-    camera.position.z = 5;
-
-    // アニメーションを開始
-    function animate () {
-      requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-      renderer.render(scene, camera);
-    }
-    animate();
-  }
-
 </script>
 
 </html>
