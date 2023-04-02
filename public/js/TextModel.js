@@ -51,9 +51,14 @@ class TextModel {
       bevelSize: this.bevelSize,
       bevelOffset: this.bevelOffset,
     };
+    // テキストメッシュの作成
     const textGeometry = new THREE.TextGeometry(books[0].book_title, options);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const material = new THREE.MeshNormalMaterial();
     const textMesh = new THREE.Mesh(textGeometry, material);
+    // 座標の中心を求める
+    const box = new THREE.Box3().setFromObject(textMesh);
+    const center = box.getCenter(new THREE.Vector3());
+    textMesh.position.x = - center.x;
     return textMesh;
   }
 

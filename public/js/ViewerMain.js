@@ -60,42 +60,50 @@ class ViewerMain {
 
     // カメラを作成
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    // カメラを移動
-    this.camera.position.z = 5;
 
     // レンダラーを作成
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("viewer_front").appendChild(this.renderer.domElement);
 
-    // テキストのモデルを作成
-    const textModel = new TextModel(this.font);
-    // textMeshはGUIで可変なためletで定義
-    let textMesh = await textModel.generateMesh();
-    this.scene.add(textMesh);
+    // 空間の中心に3D起点を追加
+    const centerAxes = new THREE.AxesHelper(100);
+    this.scene.add(centerAxes);
 
-    // GUIのプロパティを定義、可変のためlet
-    let guiProperties = [
-      { name: "size", min: 5, max: 100 },
-      { name: "height", min: 0.1, max: 10 },
-      { name: "curveSegments", min: 0.1, max: 5 },
-      { name: "bevelThickness", min: 0.1, max: 5 },
-      { name: "bevelSize", min: 0.01, max: 3 },
-      { name: "bevelOffset", min: -5, max: 0 }
-    ];
+    // groupを作成後からオブジェクトを格納する
+    let group = new THREE.Group();
+    this.scene.add(group);
 
-    // GUIを作成
-    const gui = new dat.GUI();
-    guiProperties.forEach(property => {
-      gui.add(textModel, property.name, property.min, property.max).onChange(() => {
-        textModel.generateMesh().then(mesh => {
-          // 既存のtextMeshを更新
-          this.scene.remove(textMesh);
-          textMesh = mesh;
-          this.scene.add(textMesh);
-        });
-      });
-    });
+    // モデルの位置を決定
+    async function createCircularTextWithHeightInterval (font, n) {
+      for (let i = 0; i < n; i++) {
+
+        // テキストのモデルを作成
+        const textModel = new TextModel(font);
+        // textMeshはGUIで可変なためletで定義
+        let textMesh = await textModel.generateMesh();
+
+        // オブジェクトから半径を算定
+        const height = textMesh.geometry.parameters.options.size * 9; // TextObjectの高さ
+        const radius = height * (n / (2 * Math.PI)); // 半径
+
+        // 縦の円状に配置するための座標を計算
+        const theta = (i / n) * Math.PI * 2; // 角度
+        const y = radius * Math.sin(theta); // y座標
+        const z = radius * Math.cos(theta);  // z座標
+
+        // textObjectの位置を設定
+        textMesh.position.setY(y);
+        textMesh.position.setZ(z);
+
+        // グループにtextObjectを追加
+        group.add(textMesh);
+      }
+    }
+    createCircularTextWithHeightInterval(this.font, 10);
+
+    // カメラを移動
+    this.camera.position.z = 1000;
 
     // カメラコントローラーを作成
     const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -104,10 +112,11 @@ class ViewerMain {
     orbit.dampingFactor = 0.2;
 
     /**
-     * アニメーションを実行する
+     * フレーム毎に実行されるアニメーション
      *
      */
     const animate = () => {
+      group.rotation.x += 0.005;
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }
