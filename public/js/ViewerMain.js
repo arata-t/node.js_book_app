@@ -1,5 +1,6 @@
-import TextModel from "./TextModel.js";
+"use strict";
 
+import TextAndSphere from "./TextAndSphere.js";
 /**
  * viewer_frontから呼び出されるviewのメイン処理クラス
  */
@@ -25,7 +26,7 @@ class ViewerMain {
    */
   async init () {
 
-    // 最初にFontloaderを読み込む必要がある
+    // 最初にFontLoaderを読み込む必要がある
     const fontLoader = new THREE.FontLoader();
     fontLoader.load('../fonts/Rounded Mplus 1c_Regular.json', (font) => {
 
@@ -70,37 +71,42 @@ class ViewerMain {
     const centerAxes = new THREE.AxesHelper(100);
     this.scene.add(centerAxes);
 
-    // groupを作成後からオブジェクトを格納する
+    // groupに後から作成したオブジェクトを格納する
     let group = new THREE.Group();
     this.scene.add(group);
 
-    // モデルの位置を決定
-    async function createCircularTextWithHeightInterval (font, n) {
+    // テキストのモデルを作成、textAndSphereはGUIで可変なためletで定義
+    let textAndSphere = await new TextAndSphere().generateMesh(this.font);
+    this.scene.add(textAndSphere);
+
+    // オブジェクト群を作成する
+    async function generateTextObjectAndSphere (font, n) {
       for (let i = 0; i < n; i++) {
 
         // テキストのモデルを作成
-        const textModel = new TextModel(font);
-        // textMeshはGUIで可変なためletで定義
-        let textMesh = await textModel.generateMesh();
+        const TextAndSphere = new TextAndSphere(font);
+        // textAndSphereはGUIで可変なためletで定義
+        let textAndSphere = await TextAndSphere.generateMesh();
 
         // オブジェクトから半径を算定
-        const height = textMesh.geometry.parameters.options.size * 9; // TextObjectの高さ
-        const radius = height * (n / (2 * Math.PI)); // 半径
+        const width = 800;
+        // const height = textAndSphere.geometry.parameters.options.size * 9; // TextObjectの高さ
+        const radius = width * (n / (2 * Math.PI)); // 半径
 
         // 縦の円状に配置するための座標を計算
         const theta = (i / n) * Math.PI * 2; // 角度
-        const y = radius * Math.sin(theta); // y座標
-        const z = radius * Math.cos(theta);  // z座標
+        const x = radius * Math.cos(theta); // y座標
+        const z = radius * Math.sin(theta); // z座標
 
         // textObjectの位置を設定
-        textMesh.position.setY(y);
-        textMesh.position.setZ(z);
+        // textAndSphere.position.setX(x);
+        // textAndSphere.position.setZ(z);
 
         // グループにtextObjectを追加
-        group.add(textMesh);
+        group.add(textAndSphere);
       }
     }
-    createCircularTextWithHeightInterval(this.font, 10);
+    // generateTextObjectAndSphere(this.font, 1);
 
     // カメラを移動
     this.camera.position.z = 1000;
@@ -116,7 +122,7 @@ class ViewerMain {
      *
      */
     const animate = () => {
-      group.rotation.x += 0.005;
+      group.rotation.y += 0.005;
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }
