@@ -4,39 +4,46 @@ import WireframeSphere from "./WireframeSphere.js";
 import CircularTextMesh from "./CircularTextMesh.js"
 
 /**
- * 表示するテキストモデルを生成するクラス
+ * 環状テキストメッシュとワイヤーフレームの球体のグループクラス
  */
 class TextAndSphere {
   constructor() {
-
+    /** @type {THREE.Group} 環状テキストメッシュとワイヤーフレームの球体のグループ */
+    this.textAndSphereGroup = null;
   }
 
   /**
-   * テキストモデルのメッシュを作成する
-   * @returns {object} group 環状テキストメッシュとワイヤーフレームの球体のグループオブジェクト
-   * @param {object} font フォントの情報
+   * 環状テキストメッシュとワイヤーフレームの球体のグループを作成する
+   * @param {object} font fontの情報
+   * @returns {Promise<THREE.Group>} 環状テキストメッシュとワイヤーフレームの球体のグループ
    */
-  async generateMesh (font) {
+  async generateTextAndSphere (font) {
 
-    const group = new THREE.Group(); // Groupオブジェクトを作成
+    // textAndSphereGroupをグループインスタンス化
+    this.textAndSphereGroup = new THREE.Group();
 
     /**
      * 環状テキストメッシュを作成
      */
     const circularTextMesh = await new CircularTextMesh().generateTextMesh(font);
-    group.add(circularTextMesh);
+    this.textAndSphereGroup.add(circularTextMesh);
 
     /**
      * ワイヤーフレームの球体を作成
      */
     const wireframeSphere = new WireframeSphere().generateSphereMesh();
-    group.add(wireframeSphere);
+    this.textAndSphereGroup.add(wireframeSphere);
 
-
-
-    return group;
+    return this.textAndSphereGroup;
   }
 
+  /**
+   * フレーム毎に実行されるアニメーション
+   */
+  animate = () => {
+    this.textAndSphereGroup.rotation.y -= 0.01;
+    requestAnimationFrame(this.animate);
+  }
 }
 
 export { TextAndSphere as default };

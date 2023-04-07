@@ -7,16 +7,16 @@ import TextAndSphere from "./TextAndSphere.js";
 class ViewerMain {
   constructor() {
     /** @type {object} フォントに関する情報 */
-    this.font = '';
+    this.font = {};
 
-    /**  @type {object} カメラに関する情報 */
-    this.camera = '';
+    /** @type {THREE.PerspectiveCamera} カメラに関する情報クラス */
+    this.camera = null;
 
-    /**  @type {object} シーンに関する情報 */
-    this.scene = '';
+    /** @type {THREE.Scene} シーンに関する情報クラス */
+    this.scene = null;
 
-    /**  @type {object} レンダラーに関する情報 */
-    this.renderer = '';
+    /** @type {THREE.WebGLRenderer} レンダラーに関する情報クラス */
+    this.renderer = null;
 
   }
 
@@ -59,9 +59,6 @@ class ViewerMain {
     // 3Dシーンを作成
     this.scene = new THREE.Scene();
 
-    // カメラを作成
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
     // レンダラーを作成
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -71,13 +68,12 @@ class ViewerMain {
     const centerAxes = new THREE.AxesHelper(100);
     this.scene.add(centerAxes);
 
-    // groupに後から作成したオブジェクトを格納する
-    let group = new THREE.Group();
+    //環状テキストメッシュとワイヤーフレームの球体のグループを作成
+    let textAndSphere = new TextAndSphere(); // textAndSphereはGUIで可変なためletで定義
+    const group = await textAndSphere.generateTextAndSphere(this.font);
     this.scene.add(group);
-
-    // テキストのモデルを作成、textAndSphereはGUIで可変なためletで定義
-    let textAndSphere = await new TextAndSphere().generateMesh(this.font);
-    this.scene.add(textAndSphere);
+    // textAndSphereのアニメーションを実行
+    textAndSphere.animate();
 
     // オブジェクト群を作成する
     async function generateTextObjectAndSphere (font, n) {
@@ -108,6 +104,9 @@ class ViewerMain {
     }
     // generateTextObjectAndSphere(this.font, 1);
 
+    // カメラを作成
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
     // カメラを移動
     this.camera.position.z = 1000;
 
@@ -119,10 +118,9 @@ class ViewerMain {
 
     /**
      * フレーム毎に実行されるアニメーション
-     *
      */
     const animate = () => {
-      group.rotation.y += 0.005;
+      group.rotation.x += 0.005;
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }
