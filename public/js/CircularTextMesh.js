@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * 環状テキストメッシュクラス
+ */
 class CircularTextMesh {
   constructor(font) {
     /** @type {object} フォントの情報 */
@@ -21,7 +24,8 @@ class CircularTextMesh {
 
   /**
    * 環状テキストメッシュを作成する
-   * @returns {object} group 環状テキストメッシュのグループオブジェクト
+   * @param {object} font フォントの情報
+   * @returns {Promise<THREE.Group>} group 環状テキストメッシュのグループオブジェクト
    */
   async generateTextMesh (font) {
 
