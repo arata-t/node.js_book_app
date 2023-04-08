@@ -24,16 +24,15 @@ class CircularTextMesh {
 
   /**
    * 環状テキストメッシュを作成する
-   * @param {object} font フォントの情報
+   * @param {object} books 本に関する情報のオブジェクト
+   * @param {object} font fontの情報
+   * @param {number} current_num 繰り返し処理の現在の番号
    * @returns {Promise<THREE.Group>} group 環状テキストメッシュのグループオブジェクト
    */
-  async generateTextMesh (font) {
+  async generateTextMesh (books, font, current_num) {
 
     // fontを代入
     this.font = font;
-
-    // ブックオブジェクトを取得
-    const books = await this.getBook();
 
     // オプションを設定
     const options = {
@@ -43,7 +42,7 @@ class CircularTextMesh {
     };
 
     // book_titleの文字を分解して配列にする
-    const characters = books[0].book_title.split('');
+    const characters = books[current_num].book_title.split('');
     const group = new THREE.Group(); // Groupオブジェクトを作成
 
     // 環状テキストメッシュのグループを作成
@@ -66,23 +65,6 @@ class CircularTextMesh {
     return group;
   }
 
-  /**
-   * サーバーからブックオブジェクトを取得
-   * @returns {object} bookオブジェクトのデータ
-   */
-  async getBook () {
-    try {
-      const response = await fetch('/api/data');
-      if (!response.ok) {
-        throw new Error('Error:', response.statusText);
-      }
-      const data = await response.json();
-      // サーバーから値を取得できたら返却する
-      return data;
-    } catch (error) {
-      alert('ブックオブジェクトの取得に失敗しました。');
-    }
-  }
 }
 
 export { CircularTextMesh as default };

@@ -6,6 +6,10 @@ import TextAndSphere from "./TextAndSphere.js";
  */
 class ViewerMain {
   constructor() {
+
+    /** @type {object} 本に関する情報のオブジェクト */
+    this.books = {};
+
     /** @type {object} フォントに関する情報 */
     this.font = {};
 
@@ -32,11 +36,14 @@ class ViewerMain {
    */
   async init () {
 
+    // サーバーからブックオブジェクトを取得
+    this.books = await this.getBooks();
+
     // 最初にFontLoaderを読み込む必要がある
     const fontLoader = new THREE.FontLoader();
     fontLoader.load('../fonts/Rounded Mplus 1c_Regular.json', (font) => {
 
-      // フォントに関する情報
+      // フォントに関する情報をセットする
       this.font = font;
 
       // ビューアーを生成する
@@ -49,7 +56,7 @@ class ViewerMain {
   }
 
   /**
-   * 画面をリサイズする
+   * 画面をリサイズに合わせて、画面のアスペクト比を調整する
    */
   onResize = async () => {
     this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -79,7 +86,7 @@ class ViewerMain {
     this.scene.add(this.masterGroup);
 
     // テキストと球体のモデル群を作成する
-    this.generateTextAndSphereGroup(this.font, 5);
+    this.generateTextAndSphereGroup();
 
     // カメラを作成
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -104,21 +111,41 @@ class ViewerMain {
     animate();
   }
 
-  // テキストと球体のモデル群を作成する
-  generateTextAndSphereGroup = async (font, n) => {
+  /**
+   * サーバーからブックオブジェクトを取得する
+   * @returns {object} booksオブジェクトのデータ
+   */
+  async getBooks () {
+    try {
+      // サーバーから値を取得
+      const response = await fetch('/api/data');
+      if (!response.ok) {
+        throw new Error('Error:', response.statusText);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      alert('ブックオブジェクトの取得に失敗しました。');
+    }
+  }
 
-    for (let i = 0; i < n; i++) {
+  // テキストと球体のモデル群を作成する
+  generateTextAndSphereGroup = async () => {
+
+    /** @type {number} book_num ブックオブジェクトの数 */
+    const book_num = this.books.length;
+    for (let current_num = 0; current_num < book_num; current_num++) {
 
       // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
-      const textAndSphere = await textAndSphereClass.generateTextAndSphere(this.font);
+      const textAndSphere = await textAndSphereClass.generateTextAndSphere(this.books, this.font, current_num);
 
       // オブジェクトから半径を算定
       const width = 1000;
-      const radius = width * (n / (2 * Math.PI)); // 半径
+      const radius = width * (book_num / (2 * Math.PI)); // 半径
 
       // 縦の円状に配置するための座標を計算
-      const theta = (i / n) * Math.PI * 2; // 角度
+      const theta = (current_num / book_num) * Math.PI * 2; // 角度
       const x = radius * Math.cos(theta); // y座標
       const z = radius * Math.sin(theta); // z座標
 
