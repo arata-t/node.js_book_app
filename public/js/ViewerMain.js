@@ -129,7 +129,9 @@ class ViewerMain {
     }
   }
 
-  // テキストと球体のモデル群を作成する
+  /**
+   * テキストと球体のモデル群を作成する
+   */
   generateTextAndSphereGroup = async () => {
 
     /** @type {number} book_num ブックオブジェクトの数 */
