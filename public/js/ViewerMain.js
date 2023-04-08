@@ -18,6 +18,12 @@ class ViewerMain {
     /** @type {THREE.WebGLRenderer} レンダラーに関する情報クラス */
     this.renderer = null;
 
+    /**
+     * @type {TreeWalker.Group} 全体を統括するグループ
+     * このグループ内にモデルをaddする
+     */
+    this.masterGroup = null;
+
   }
 
   /**
@@ -68,46 +74,18 @@ class ViewerMain {
     const centerAxes = new THREE.AxesHelper(100);
     this.scene.add(centerAxes);
 
-    //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
-    const textAndSphereClass = new TextAndSphere();
-    const textAndSphere = await textAndSphereClass.generateTextAndSphere(this.font);
-    this.scene.add(textAndSphere);
-    // textAndSphereのアニメーションを実行
-    textAndSphereClass.animate();
+    // 全体を統括するグループをシーンに追加
+    this.masterGroup = new THREE.Group();
+    this.scene.add(this.masterGroup);
 
-    // オブジェクト群を作成する
-    async function generateTextObjectAndSphere (font, n) {
-      for (let i = 0; i < n; i++) {
-
-        // 球体を作成（仮）
-        const material = new THREE.MeshNormalMaterial();
-        const geometry = new THREE.SphereGeometry(30, 30, 30);
-        const sphereMesh = new THREE.Mesh(geometry, material);
-
-        // オブジェクトから半径を算定
-        const width = 800;
-        const radius = width * (n / (2 * Math.PI)); // 半径
-
-        // 縦の円状に配置するための座標を計算
-        const theta = (i / n) * Math.PI * 2; // 角度
-        const x = radius * Math.cos(theta); // y座標
-        const z = radius * Math.sin(theta); // z座標
-
-        // textObjectの位置を設定
-        sphereMesh.position.setX(x);
-        sphereMesh.position.setZ(z);
-
-        // グループにtextObjectを追加
-        group.add(textAndSphere);
-      }
-    }
-    // generateTextObjectAndSphere(this.font, 1);
+    // テキストと球体のモデル群を作成する
+    this.generateTextAndSphereGroup(this.font, 5);
 
     // カメラを作成
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     // カメラを移動
-    this.camera.position.z = 1000;
+    this.camera.position.z = 1500;
 
     // カメラコントローラーを作成
     const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -119,11 +97,41 @@ class ViewerMain {
      * フレーム毎に実行されるアニメーション
      */
     const animate = () => {
-      textAndSphere.rotation.x += 0.005;
+      this.masterGroup.rotation.y -= 0.005;
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }
     animate();
+  }
+
+  // テキストと球体のモデル群を作成する
+  generateTextAndSphereGroup = async (font, n) => {
+
+    for (let i = 0; i < n; i++) {
+
+      // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
+      const textAndSphereClass = new TextAndSphere();
+      const textAndSphere = await textAndSphereClass.generateTextAndSphere(this.font);
+
+      // オブジェクトから半径を算定
+      const width = 1000;
+      const radius = width * (n / (2 * Math.PI)); // 半径
+
+      // 縦の円状に配置するための座標を計算
+      const theta = (i / n) * Math.PI * 2; // 角度
+      const x = radius * Math.cos(theta); // y座標
+      const z = radius * Math.sin(theta); // z座標
+
+      // textObjectの位置を設定
+      textAndSphere.position.setX(x);
+      textAndSphere.position.setZ(z);
+
+      // グループにtextObjectを追加
+      this.masterGroup.add(textAndSphere);
+
+      // textAndSphereクラスのアニメーションを実行
+      textAndSphereClass.animate();
+    }
   }
 }
 
