@@ -14,7 +14,7 @@ class TextAndSphere {
 
   /**
    * 環状テキストメッシュとワイヤーフレームの球体のグループを作成する
-   * @param {object} books 本に関する情報のオブジェクト
+   * @param {array} books 本に関する情報の配列
    * @param {object} font fontの情報
    * @param {number} current_num 繰り返し処理の現在番号
    * @returns {Promise<THREE.Group>} 環状テキストメッシュとワイヤーフレームの球体のグループ

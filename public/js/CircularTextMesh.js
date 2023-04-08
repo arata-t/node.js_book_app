@@ -24,7 +24,7 @@ class CircularTextMesh {
 
   /**
    * 環状テキストメッシュを作成する
-   * @param {object} books 本に関する情報のオブジェクト
+   * @param {array} books 本に関する情報の配列
    * @param {object} font fontの情報
    * @param {number} current_num 繰り返し処理の現在の番号
    * @returns {Promise<THREE.Group>} group 環状テキストメッシュのグループオブジェクト

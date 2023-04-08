@@ -7,8 +7,8 @@ import TextAndSphere from "./TextAndSphere.js";
 class ViewerMain {
   constructor() {
 
-    /** @type {object} 本に関する情報のオブジェクト */
-    this.books = {};
+    /** @type {array} 本に関する情報の配列 */
+    this.books = [];
 
     /** @type {object} フォントに関する情報 */
     this.font = {};
