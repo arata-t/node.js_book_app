@@ -34,7 +34,7 @@ class ViewerMain {
       this.font = font;
 
       // ビューアーを生成する
-      this.generateViewer();
+      this.startView();
 
       // 画面の拡大縮小に対応
       window.addEventListener('resize', this.onResize, false);
@@ -54,7 +54,7 @@ class ViewerMain {
   /**
    * ビューアーを起動する
    */
-  async generateViewer () {
+  async startView () {
 
     // 3Dシーンを作成
     this.scene = new THREE.Scene();
@@ -68,25 +68,24 @@ class ViewerMain {
     const centerAxes = new THREE.AxesHelper(100);
     this.scene.add(centerAxes);
 
-    //環状テキストメッシュとワイヤーフレームの球体のグループを作成
-    let textAndSphere = new TextAndSphere(); // textAndSphereはGUIで可変なためletで定義
-    const group = await textAndSphere.generateTextAndSphere(this.font);
-    this.scene.add(group);
+    //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
+    const textAndSphereClass = new TextAndSphere();
+    const textAndSphere = await textAndSphereClass.generateTextAndSphere(this.font);
+    this.scene.add(textAndSphere);
     // textAndSphereのアニメーションを実行
-    textAndSphere.animate();
+    textAndSphereClass.animate();
 
     // オブジェクト群を作成する
     async function generateTextObjectAndSphere (font, n) {
       for (let i = 0; i < n; i++) {
 
-        // テキストのモデルを作成
-        const TextAndSphere = new TextAndSphere(font);
-        // textAndSphereはGUIで可変なためletで定義
-        let textAndSphere = await TextAndSphere.generateMesh();
+        // 球体を作成（仮）
+        const material = new THREE.MeshNormalMaterial();
+        const geometry = new THREE.SphereGeometry(30, 30, 30);
+        const sphereMesh = new THREE.Mesh(geometry, material);
 
         // オブジェクトから半径を算定
         const width = 800;
-        // const height = textAndSphere.geometry.parameters.options.size * 9; // TextObjectの高さ
         const radius = width * (n / (2 * Math.PI)); // 半径
 
         // 縦の円状に配置するための座標を計算
@@ -95,8 +94,8 @@ class ViewerMain {
         const z = radius * Math.sin(theta); // z座標
 
         // textObjectの位置を設定
-        // textAndSphere.position.setX(x);
-        // textAndSphere.position.setZ(z);
+        sphereMesh.position.setX(x);
+        sphereMesh.position.setZ(z);
 
         // グループにtextObjectを追加
         group.add(textAndSphere);
@@ -120,7 +119,7 @@ class ViewerMain {
      * フレーム毎に実行されるアニメーション
      */
     const animate = () => {
-      group.rotation.x += 0.005;
+      textAndSphere.rotation.x += 0.005;
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }
