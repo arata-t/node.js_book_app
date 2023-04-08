@@ -26,7 +26,7 @@ class ViewerMain {
      * @type {TreeWalker.Group} 全体を統括するグループ
      * このグループ内にモデルをaddする
      */
-    this.masterGroup = null;
+    this.master_group = null;
 
   }
 
@@ -40,8 +40,8 @@ class ViewerMain {
     this.books = await this.getBooks();
 
     // 最初にFontLoaderを読み込む必要がある
-    const fontLoader = new THREE.FontLoader();
-    fontLoader.load('../fonts/Rounded Mplus 1c_Regular.json', (font) => {
+    const font_loader = new THREE.FontLoader();
+    font_loader.load('../fonts/Rounded Mplus 1c_Regular.json', (font) => {
 
       // フォントに関する情報をセットする
       this.font = font;
@@ -78,12 +78,12 @@ class ViewerMain {
     document.getElementById("viewer_front").appendChild(this.renderer.domElement);
 
     // 空間の中心に3D起点を追加
-    const centerAxes = new THREE.AxesHelper(100);
-    this.scene.add(centerAxes);
+    const center_axes = new THREE.AxesHelper(100);
+    this.scene.add(center_axes);
 
     // 全体を統括するグループをシーンに追加
-    this.masterGroup = new THREE.Group();
-    this.scene.add(this.masterGroup);
+    this.master_group = new THREE.Group();
+    this.scene.add(this.master_group);
 
     // テキストと球体のモデル群を作成する
     this.generateTextAndSphereGroup();
@@ -104,7 +104,7 @@ class ViewerMain {
      * フレーム毎に実行されるアニメーション
      */
     const animate = () => {
-      this.masterGroup.rotation.y -= 0.005;
+      this.master_group.rotation.y -= 0.005;
       requestAnimationFrame(animate);
       this.renderer.render(this.scene, this.camera);
     }
@@ -138,7 +138,7 @@ class ViewerMain {
 
       // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
-      const textAndSphere = await textAndSphereClass.generateTextAndSphere(this.books, this.font, current_num);
+      const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books, this.font, current_num);
 
       // オブジェクトから半径を算定
       const width = 1000;
@@ -150,11 +150,11 @@ class ViewerMain {
       const z = radius * Math.sin(theta); // z座標
 
       // textObjectの位置を設定
-      textAndSphere.position.setX(x);
-      textAndSphere.position.setZ(z);
+      text_and_sphere.position.setX(x);
+      text_and_sphere.position.setZ(z);
 
       // グループにtextObjectを追加
-      this.masterGroup.add(textAndSphere);
+      this.master_group.add(text_and_sphere);
 
       // textAndSphereクラスのアニメーションを実行
       textAndSphereClass.animate();

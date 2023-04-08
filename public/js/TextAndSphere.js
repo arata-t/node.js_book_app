@@ -9,7 +9,7 @@ import CircularTextMesh from "./CircularTextMesh.js"
 class TextAndSphere {
   constructor() {
     /** @type {THREE.Group} 環状テキストメッシュとワイヤーフレームの球体のグループ */
-    this.textAndSphereGroup = null;
+    this.text_and_sphere_group = null;
   }
 
   /**
@@ -22,28 +22,28 @@ class TextAndSphere {
   async generateTextAndSphere (books, font, current_num) {
 
     // textAndSphereGroupをグループインスタンス化
-    this.textAndSphereGroup = new THREE.Group();
+    this.text_and_sphere_group = new THREE.Group();
 
     /**
      * 環状テキストメッシュを作成
      */
-    const circularTextMesh = await new CircularTextMesh().generateTextMesh(books, font, current_num);
-    this.textAndSphereGroup.add(circularTextMesh);
+    const circular_text_mesh = await new CircularTextMesh().generateTextMesh(books, font, current_num);
+    this.text_and_sphere_group.add(circular_text_mesh);
 
     /**
      * ワイヤーフレームの球体を作成
      */
-    const wireframeSphere = new WireframeSphere().generateSphereMesh();
-    this.textAndSphereGroup.add(wireframeSphere);
+    const wireframe_sphere = new WireframeSphere().generateSphereMesh();
+    this.text_and_sphere_group.add(wireframe_sphere);
 
-    return this.textAndSphereGroup;
+    return this.text_and_sphere_group;
   }
 
   /**
    * フレーム毎に実行されるアニメーション
    */
   animate = () => {
-    this.textAndSphereGroup.rotation.y -= 0.01;
+    this.text_and_sphere_group.rotation.y -= 0.01;
     requestAnimationFrame(this.animate);
   }
 }

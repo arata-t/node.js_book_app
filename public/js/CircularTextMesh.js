@@ -47,20 +47,20 @@ class CircularTextMesh {
 
     // 環状テキストメッシュのグループを作成
     characters.forEach((character, index) => {
-      const characterGeometry = new THREE.TextGeometry(character, options);
+      const character_geometry = new THREE.TextGeometry(character, options);
       const material = new THREE.MeshNormalMaterial();
-      const characterMesh = new THREE.Mesh(characterGeometry, material);
+      const character_mesh = new THREE.Mesh(character_geometry, material);
 
       const angle = ((index + 1) * this.angleIncrement) * Math.PI / 180; // 回転する角度
       const x = this.radius * Math.sin(angle); // X座標の計算
       const y = 0; // Y座標の計算
       const z = this.radius * Math.cos(angle); // Z座標の計算
 
-      characterMesh.position.set(x, y, z); // テキストオブジェクトを位置座標に移動する
+      character_mesh.position.set(x, y, z); // テキストオブジェクトを位置座標に移動する
 
-      characterMesh.lookAt(new THREE.Vector3(0, 0, 0)) // 中心に向ける
-      characterMesh.rotation.y += Math.PI; // テキストオブジェクトを水平方向に傾ける
-      group.add(characterMesh); // グループオブジェクトに追加する
+      character_mesh.lookAt(new THREE.Vector3(0, 0, 0)) // 中心に向ける
+      character_mesh.rotation.y += Math.PI; // テキストオブジェクトを水平方向に傾ける
+      group.add(character_mesh); // グループオブジェクトに追加する
     });
     return group;
   }
