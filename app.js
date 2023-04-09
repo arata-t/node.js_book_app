@@ -85,8 +85,8 @@ app.get('/edit/:book_id', (req, res) => {
 app.post('/create', (req, res) => {
   console.log(req.body);
   connection.query(
-    'INSERT INTO tb_book(book_title, finished_date, classification, worried_word, contents) VALUES(?,?,?,?,?)',
-    [req.body.book_title, req.body.finished_date, req.body.classification, req.body.worried_word, req.body.contents],
+    'INSERT INTO tb_book(book_title, finished_date, classification, worried_word, contents) VALUES(?,?,?,?,?,?)',
+    [req.body.book_title, req.body.finished_date, req.body.classification, req.body.worried_word, req.body.contents, req.body.book_author],
     (error, results) => {
       if (error) {
         console.log('create' + error);
@@ -119,8 +119,8 @@ app.post('/delete/:book_id', (req, res) => {
 // 編集処理
 app.post('/edit/:book_id', (req, res) => {
   connection.query(
-    'UPDATE tb_book SET book_title = ?, finished_date = ?, classification = ?,worried_word = ?, contents = ? WHERE book_id = ? ',
-    [req.body.book_title, req.body.finished_date, req.body.classification, req.body.worried_word, req.body.contents, req.params.book_id],
+    'UPDATE tb_book SET book_title = ?, book_author = ?, finished_date = ?, classification = ?,worried_word = ?, contents = ? WHERE book_id = ? ',
+    [req.body.book_title, req.body.book_author, req.body.finished_date, req.body.classification, req.body.worried_word, req.body.contents, req.params.book_id],
     (error, results) => {
       if (error) {
         console.log('post edit' + error);

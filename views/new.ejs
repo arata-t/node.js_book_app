@@ -23,17 +23,26 @@
         <p class="form-label">本のタイトル</p>
         <input type="text" name="book_title" maxlength="50">
 
+        <p class="form-label">著者</p>
+        <input type="text" name="book_author" maxlength="20">
+
         <p class="form-label">読了日</p>
         <input type="date" name="finished_date">
 
         <p class="form-label">分類</p>
-        <input type="text" name="classification" maxlength="20">
+        <select name="classification">
+          <option value="小説">小説</option>
+          <option value="ビジネス・政治経済">ビジネス・政治経済</option>
+          <option value="実用書">実用書</option>
+          <option value="参考書">参考書</option>
+          <option value="その他">その他</option>
+        </select>
 
         <p class="form-label">気になる一言</p>
         <input type="text" name="worried_word" maxlength="50" class="worried_word">
 
         <p class="form-label">内容</p>
-        <textarea type="text" name="contents" maxlength="500" class="text_contents"></textarea>
+        <textarea type="text" name="contents" maxlength="2500" class="text_contents"></textarea>
 
         <br>
         <input type="submit" class="form_button" value="作成する">
