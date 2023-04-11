@@ -43,7 +43,7 @@ class TextAndSphere {
    * フレーム毎に実行されるアニメーション
    */
   animate = () => {
-    this.text_and_sphere_group.rotation.y -= 0.01;
+    this.text_and_sphere_group.rotation.y -= 0.005;
     requestAnimationFrame(this.animate);
   }
 }
