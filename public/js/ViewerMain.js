@@ -1,8 +1,11 @@
 "use strict";
 
 import TextAndSphere from "./TextAndSphere.js";
+import WireframeSphere from "./WireframeSphere.js"
+import Particle from "./Particle.js"
+
 /**
- * viewer_frontから呼び出されるviewのメイン処理クラス
+ * viewer_frontから呼び出1されるviewのメイン処理クラス
  */
 class ViewerMain {
   constructor() {
@@ -41,7 +44,7 @@ class ViewerMain {
 
     // 最初にFontLoaderを読み込む必要がある
     const font_loader = new THREE.FontLoader();
-    font_loader.load('../fonts/Rounded Mplus 1c_Regular.json', (font) => {
+    font_loader.load('../fonts/Zen Kaku Gothic New Medium_Regular.json', (font) => {
 
       // フォントに関する情報をセットする
       this.font = font;
@@ -81,18 +84,22 @@ class ViewerMain {
     const center_axes = new THREE.AxesHelper(100);
     this.scene.add(center_axes);
 
-    // 全体を統括するグループをシーンに追加
+    // 球体全体を統括するグループをシーンに追加
     this.master_group = new THREE.Group();
     this.scene.add(this.master_group);
 
-    // テキストと球体のモデル群を作成する
-    this.generateTextAndSphereGroup();
+    // テキストと球体のモデル群を作成し、円の半径を返却する
+    const radius = await this.generateTextAndSphereGroup();
+
+    // パーティクルを作成する
+    const particle = await new Particle().generateParticle();
+    this.scene.add(particle);
 
     // カメラを作成
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 20000);
 
     // カメラを移動
-    this.camera.position.z = 1500;
+    this.camera.position.z = radius + 1000;
 
     // カメラコントローラーを作成
     const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -131,20 +138,23 @@ class ViewerMain {
 
   /**
    * テキストと球体のモデル群を作成する
+   * @returns {Promise<number>} radius 円の半径
    */
   generateTextAndSphereGroup = async () => {
 
     /** @type {number} book_num ブックオブジェクトの数 */
     const book_num = this.books.length;
+
+    // 球体同士の間隔から半径を求める
+    const distance = new WireframeSphere().radius * 10; // 球体同士の間隔
+    /** @type {number} radius 円の半径 */
+    const radius = distance * (book_num / (2 * Math.PI));
+
     for (let current_num = 0; current_num < book_num; current_num++) {
 
       // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
       const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books, this.font, current_num);
-
-      // オブジェクトから半径を算定
-      const width = 1000;
-      const radius = width * (book_num / (2 * Math.PI)); // 半径
 
       // 縦の円状に配置するための座標を計算
       const theta = (current_num / book_num) * Math.PI * 2; // 角度
@@ -161,6 +171,7 @@ class ViewerMain {
       // textAndSphereクラスのアニメーションを実行
       textAndSphereClass.animate();
     }
+    return radius;
   }
 }
 

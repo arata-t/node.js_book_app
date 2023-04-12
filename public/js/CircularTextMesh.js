@@ -48,7 +48,7 @@ class CircularTextMesh {
     // 環状テキストメッシュのグループを作成
     characters.forEach((character, index) => {
       const character_geometry = new THREE.TextGeometry(character, options);
-      const material = new THREE.MeshNormalMaterial();
+      const material = new THREE.MeshBasicMaterial({ color: 'yellow' });
       const character_mesh = new THREE.Mesh(character_geometry, material);
 
       const angle = ((index + 1) * this.angleIncrement) * Math.PI / 180; // 回転する角度
