@@ -12,7 +12,7 @@ class Particle {
     this.random_particle_range = 10000;
 
     /** @type{ number } ドットの大きさ */
-    this.particleSize = 10;
+    this.particle_size = 10;
   }
 
   /**
@@ -36,7 +36,7 @@ class Particle {
 
     // マテリアルの作成
     const particle_material = new THREE.PointsMaterial({
-      size: this.particleSize,
+      size: this.particle_size,
       vertexColors: true, //頂点の色を有効にするためのプロパティ
     })
 
