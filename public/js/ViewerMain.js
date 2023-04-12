@@ -2,8 +2,10 @@
 
 import TextAndSphere from "./TextAndSphere.js";
 import WireframeSphere from "./WireframeSphere.js"
+import Particle from "./Particle.js"
+
 /**
- * viewer_frontから呼び出されるviewのメイン処理クラス
+ * viewer_frontから呼び出1されるviewのメイン処理クラス
  */
 class ViewerMain {
   constructor() {
@@ -82,12 +84,16 @@ class ViewerMain {
     const center_axes = new THREE.AxesHelper(100);
     this.scene.add(center_axes);
 
-    // 全体を統括するグループをシーンに追加
+    // 球体全体を統括するグループをシーンに追加
     this.master_group = new THREE.Group();
     this.scene.add(this.master_group);
 
-    // テキストと球体のモデル群を作成する
+    // テキストと球体のモデル群を作成し、円の半径を返却する
     const radius = await this.generateTextAndSphereGroup();
+
+    // パーティクルを作成する
+    const particle = await new Particle().generateParticle();
+    this.scene.add(particle);
 
     // カメラを作成
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 20000);
@@ -100,8 +106,6 @@ class ViewerMain {
     // 滑らかにカメラコントローラーを制御する
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.2;
-
-    // 照明を追加する
 
     /**
      * フレーム毎に実行されるアニメーション
