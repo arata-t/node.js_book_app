@@ -29,7 +29,7 @@ class ViewerMain {
      * @type {TreeWalker.Group} 全体を統括するグループ
      * このグループ内にモデルをaddする
      */
-    this.master_group = null;
+    this.master_circle_group = null;
 
   }
 
@@ -85,8 +85,8 @@ class ViewerMain {
     this.scene.add(center_axes);
 
     // 球体全体を統括するグループをシーンに追加
-    this.master_group = new THREE.Group();
-    this.scene.add(this.master_group);
+    this.master_circle_group = new THREE.Group();
+    this.scene.add(this.master_circle_group);
 
     // テキストと球体のモデル群を作成し、円の半径を返却する
     const radius = await this.generateTextAndSphereGroup();
@@ -107,15 +107,8 @@ class ViewerMain {
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.2;
 
-    /**
-     * フレーム毎に実行されるアニメーション
-     */
-    const animate = () => {
-      this.master_group.rotation.y -= 0.005;
-      requestAnimationFrame(animate);
-      this.renderer.render(this.scene, this.camera);
-    }
-    animate();
+    // アニメーションを実行
+    this.animate();
   }
 
   /**
@@ -166,12 +159,21 @@ class ViewerMain {
       text_and_sphere.position.setZ(z);
 
       // グループにtextObjectを追加
-      this.master_group.add(text_and_sphere);
+      this.master_circle_group.add(text_and_sphere);
 
       // textAndSphereクラスのアニメーションを実行
       textAndSphereClass.animate();
     }
     return radius;
+  }
+
+  /**
+   * フレーム毎に実行されるアニメーション
+   */
+  animate = () => {
+    this.master_circle_group.rotation.y -= 0.005;
+    requestAnimationFrame(this.animate);
+    this.renderer.render(this.scene, this.camera);
   }
 }
 
