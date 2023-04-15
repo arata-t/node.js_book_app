@@ -24,12 +24,11 @@ class CircularTextMesh {
 
   /**
    * 環状テキストメッシュを作成する
-   * @param {array} books 本に関する情報の配列
+   * @param {object} book 本に関する情報
    * @param {object} font fontの情報
-   * @param {number} current_num 繰り返し処理の現在の番号
    * @returns {Promise<THREE.Group>} group 環状テキストメッシュのグループオブジェクト
    */
-  async generateTextMesh (books, font, current_num) {
+  async generateTextMesh (book, font) {
 
     // fontを代入
     this.font = font;
@@ -42,8 +41,8 @@ class CircularTextMesh {
     };
 
     // book_titleの文字を分解して配列にする
-    const characters = books[current_num].book_title.split('');
-    const group = new THREE.Group(); // Groupオブジェクトを作成
+    const characters = book.book_title.split('');
+    const group = new THREE.Group();
 
     // 環状テキストメッシュのグループを作成
     characters.forEach((character, index) => {

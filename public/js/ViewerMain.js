@@ -147,7 +147,7 @@ class ViewerMain {
 
       // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
-      const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books, this.font, current_num);
+      const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books[current_num], this.font);
 
       // 縦の円状に配置するための座標を計算
       const theta = (current_num / book_num) * Math.PI * 2; // 角度
