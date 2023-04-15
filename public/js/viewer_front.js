@@ -7,4 +7,5 @@ import ViewerMain from "./ViewerMain.js";
 
 // ViewerMain
 const viewer = new ViewerMain();
-viewer.init();
+await viewer.init();
+document.addEventListener('mousedown', viewer.onClickSphereAndText, false);

@@ -175,6 +175,49 @@ class ViewerMain {
     requestAnimationFrame(this.animate);
     this.renderer.render(this.scene, this.camera);
   }
+
+  /**
+   * 球をクリックした時のイベント
+   * @param {Object} event イベントオブジェクト
+   */
+  onClickSphereAndText = (event) => {
+
+    // master_circle_groupに含まれているすべてのオブジェクトを配列として取得する
+    const allObjectsArray = this.getAllChildObjects(this.master_circle_group);
+
+    // クリックされた位置からレイを生成
+    const vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5).unproject(this.camera);
+
+    // レイとオブジェクトの交差を調べる
+    const raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize());
+
+    // 交差したオブジェクトを取得
+    const intersects = raycaster.intersectObjects(allObjectsArray);
+
+
+    if (intersects.length > 0) {
+      intersects[0].object.material.transparent = true;
+      intersects[0].object.material.opacity = 0.1;
+    }
+  }
+
+  /**
+   * 与えられた Three.js Group 内に含まれる全ての子オブジェクトを配列として取得する関数
+   * @param {THREE.Group} group - 全ての子オブジェクトを取得したい Three.js Group
+   * @returns {Array} - Three.js Group 内に含まれる全ての子オブジェクトを含む配列
+   */
+  getAllChildObjects = (group) => {
+    const objects = [];
+    // グループの直下の子オブジェクトを配列に追加する
+    group.children.forEach((child) => {
+      objects.push(child);
+      // 孫のオブジェクトがある場合は、再帰的に配下の全ての子オブジェクトを配列に追加する
+      if (child.children) {
+        objects.push(...this.getAllChildObjects(child));
+      }
+    });
+    return objects;
+  }
 }
 
 export { ViewerMain as default };
