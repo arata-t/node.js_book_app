@@ -194,17 +194,18 @@ class ViewerMain {
     // 交差したオブジェクトを取得
     const intersects = raycaster.intersectObjects(allObjectsArray);
 
-
     if (intersects.length > 0) {
-      intersects[0].object.material.transparent = true;
-      intersects[0].object.material.opacity = 0.1;
+      // クリックした一番手前のオブジェクトがintersects[0]となる
+      const getting_id = intersects[0].object.book_id;
+      // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
+      const obj = this.books.find(book => book.book_id === getting_id);
     }
   }
 
   /**
    * 与えられた Three.js Group 内に含まれる全ての子オブジェクトを配列として取得する関数
-   * @param {THREE.Group} group - 全ての子オブジェクトを取得したい Three.js Group
-   * @returns {Array} - Three.js Group 内に含まれる全ての子オブジェクトを含む配列
+   * @param {THREE.Group} group 全ての子オブジェクトを取得したい Three.js Group
+   * @returns {Array} THREE.Group内に含まれる全ての子オブジェクトを含む配列
    */
   getAllChildObjects = (group) => {
     const objects = [];

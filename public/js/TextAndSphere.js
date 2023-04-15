@@ -32,7 +32,7 @@ class TextAndSphere {
     /**
      * ワイヤーフレームの球体を作成
      */
-    const wireframe_sphere = new WireframeSphere().generateSphereMesh();
+    const wireframe_sphere = new WireframeSphere().generateSphereMesh(book);
     this.text_and_sphere_group.add(wireframe_sphere);
     return this.text_and_sphere_group;
   }
