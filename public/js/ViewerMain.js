@@ -3,6 +3,7 @@
 import TextAndSphere from "./TextAndSphere.js";
 import WireframeSphere from "./WireframeSphere.js"
 import Particle from "./Particle.js"
+import { Camera } from "three";
 
 /**
  * viewer_frontから呼び出1されるviewのメイン処理クラス
@@ -100,6 +101,7 @@ class ViewerMain {
 
     // カメラを移動
     this.camera.position.z = radius + 1000;
+    this.camera.target = new THREE.Vector3(0, 0, 0);
 
     // カメラコントローラーを作成
     const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
@@ -173,6 +175,7 @@ class ViewerMain {
   animate = () => {
     this.master_circle_group.rotation.y -= 0.005;
     requestAnimationFrame(this.animate);
+    TWEEN.update(); // アニメーション内で呼び出さないと起動しない。
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -200,6 +203,43 @@ class ViewerMain {
       // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
       const book_obj = this.books.find(book => book.book_id === getting_id);
       console.log(book_obj)
+
+      var presetPositions = {
+        first: {
+          position: new THREE.Vector3(0, 6000, 0),
+          target: new THREE.Vector3(0, 0, 0),
+        },
+        second: {
+          position: new THREE.Vector3(0, -3000, 0),
+          // target: new THREE.Vector3(0, 0, 0),
+        },
+        left: {
+          position: new THREE.Vector3(-500, 0, 0),
+          target: new THREE.Vector3(0, 0, 0),
+        },
+        // 他にも定義可能
+      };
+
+      // 予め定義された位置のオブジェクトを取得
+      // const setPosition = presetPositions['first'];
+      // Tween.jsを使用して、cameraの位置を変化させる
+      const tween_first = new TWEEN.Tween([this.camera.position, this.camera.target])
+        .to([presetPositions['first'].position, presetPositions['first'].target], 1500)
+        .easing(TWEEN.Easing.Sinusoidal.InOut)
+        .onUpdate(() => {
+          this.camera.lookAt(presetPositions['first'].target);
+        });
+      const tween_second = new TWEEN.Tween([this.camera.position, this.camera.target])
+        .to([presetPositions['second'].position, presetPositions['second'].target], 1000)
+        .easing(TWEEN.Easing.Sinusoidal.InOut)
+      // .onUpdate(() => {
+      //   this.camera.lookAt(presetPositions['first'].target);
+      // });
+      tween_first.chain(tween_second);
+
+      tween_first.start();
+
+      // this.moveCameraToPresetPositionSmoothly(2000, presetPositions)
     }
   }
 
