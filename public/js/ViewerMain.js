@@ -204,7 +204,7 @@ class ViewerMain {
   }
 
   /**
-   * 与えられた Three.js Group 内に含まれる全ての子オブジェクトを配列として取得する関数
+   * 全ての子オブジェクトを配列として取得する
    * @param {THREE.Group} group 全ての子オブジェクトを取得したい Three.js Group
    * @returns {Array} THREE.Group内に含まれる全ての子オブジェクトを含む配列
    */
