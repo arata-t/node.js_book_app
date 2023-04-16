@@ -5,7 +5,9 @@
 
 import ViewerMain from "./ViewerMain.js";
 
-// ViewerMain
+// ビューアーを起動
 const viewer = new ViewerMain();
 await viewer.init();
+
+// ビュアーを起動した後にクリックイベントを読み込ませる
 document.addEventListener('mousedown', viewer.onClickSphereAndText, false);
