@@ -3,7 +3,6 @@
 import TextAndSphere from "./TextAndSphere.js";
 import WireframeSphere from "./WireframeSphere.js"
 import Particle from "./Particle.js"
-import { Camera } from "three";
 
 /**
  * viewer_frontから呼び出1されるviewのメイン処理クラス
@@ -97,17 +96,11 @@ class ViewerMain {
     this.scene.add(particle);
 
     // カメラを作成
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 20000);
+    const cameraInst = new Camera();
+    this.camera = await cameraInst.generateCamera(radius);
 
-    // カメラを移動
-    this.camera.position.z = radius + 1000;
-    this.camera.target = new THREE.Vector3(0, 0, 0);
-
-    // カメラコントローラーを作成
-    const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-    // 滑らかにカメラコントローラーを制御する
-    orbit.enableDamping = true;
-    orbit.dampingFactor = 0.2;
+    // カメラ制御を追加
+    const orbit = await cameraInst.generateOrbitControls(this.camera, this.renderer.domElement);
 
     // アニメーションを実行
     this.animate();
@@ -263,3 +256,36 @@ class ViewerMain {
 }
 
 export { ViewerMain as default };
+
+class Camera {
+  constructor() {
+    /** @type {number} fov 視野角 */
+    this.fov = 75;
+
+    /**@type {number} near カメラが映す近傍の距離 */
+    this.near = 0.1;
+
+    /**@type {number} far カメラが映す遠方の距離 */
+    this.far = 20000;
+  }
+
+  async generateCamera (radius) {
+    const camera = new THREE.PerspectiveCamera(this.fov, window.innerWidth / window.innerHeight, this.near, this.far)
+
+    // カメラの位置は球体が周回する半径の外側
+    camera.position.z = radius + 1000;
+    // カメラの向きは中心
+    camera.target = new THREE.Vector3(0, 0, 0);
+
+    return camera;
+  }
+
+  async generateOrbitControls (camera, domElement) {
+    const orbit = new THREE.OrbitControls(camera, domElement);
+    // 滑らかにカメラコントローラーを制御する
+    orbit.enableDamping = true;
+    orbit.dampingFactor = 0.2;
+
+    return orbit;
+  }
+}
