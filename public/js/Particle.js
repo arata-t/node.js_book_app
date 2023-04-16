@@ -6,10 +6,10 @@
 class Particle {
   constructor() {
     /** @type{ number } パーティクルの数 */
-    this.count = 6000;
+    this.count = 18000;
 
     /** @type{ number } パーティクルの乱数を生成する範囲 */
-    this.random_particle_range = 10000;
+    this.random_particle_range = 20000;
 
     /** @type{ number } ドットの大きさ */
     this.particle_size = 10;
