@@ -198,7 +198,8 @@ class ViewerMain {
       // クリックした一番手前のオブジェクトがintersects[0]となる
       const getting_id = intersects[0].object.book_id;
       // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
-      const obj = this.books.find(book => book.book_id === getting_id);
+      const book_obj = this.books.find(book => book.book_id === getting_id);
+      console.log(book_obj)
     }
   }
 

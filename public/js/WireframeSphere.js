@@ -21,6 +21,7 @@ class WireframeSphere {
     this.geometry = new THREE.SphereGeometry(this.radius, this.widthSegments, this.heightSegments);
     this.material = new THREE.MeshBasicMaterial({ color: this.color, wireframe: true });
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+    // クリック処理の際、球体を識別するためにnameとbook_idプロパティを付与する
     this.mesh.name = book.book_title;
     this.mesh.book_id = book.book_id;
     return this.mesh;
