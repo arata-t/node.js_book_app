@@ -29,7 +29,7 @@ class ViewerMain {
      * @type {TreeWalker.Group} 全体を統括するグループ
      * このグループ内にモデルをaddする
      */
-    this.master_group = null;
+    this.master_circle_group = null;
 
   }
 
@@ -85,8 +85,8 @@ class ViewerMain {
     this.scene.add(center_axes);
 
     // 球体全体を統括するグループをシーンに追加
-    this.master_group = new THREE.Group();
-    this.scene.add(this.master_group);
+    this.master_circle_group = new THREE.Group();
+    this.scene.add(this.master_circle_group);
 
     // テキストと球体のモデル群を作成し、円の半径を返却する
     const radius = await this.generateTextAndSphereGroup();
@@ -107,15 +107,8 @@ class ViewerMain {
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.2;
 
-    /**
-     * フレーム毎に実行されるアニメーション
-     */
-    const animate = () => {
-      this.master_group.rotation.y -= 0.005;
-      requestAnimationFrame(animate);
-      this.renderer.render(this.scene, this.camera);
-    }
-    animate();
+    // アニメーションを実行
+    this.animate();
   }
 
   /**
@@ -154,7 +147,7 @@ class ViewerMain {
 
       // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
-      const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books, this.font, current_num);
+      const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books[current_num], this.font);
 
       // 縦の円状に配置するための座標を計算
       const theta = (current_num / book_num) * Math.PI * 2; // 角度
@@ -166,12 +159,66 @@ class ViewerMain {
       text_and_sphere.position.setZ(z);
 
       // グループにtextObjectを追加
-      this.master_group.add(text_and_sphere);
+      this.master_circle_group.add(text_and_sphere);
 
       // textAndSphereクラスのアニメーションを実行
       textAndSphereClass.animate();
     }
     return radius;
+  }
+
+  /**
+   * フレーム毎に実行されるアニメーション
+   */
+  animate = () => {
+    this.master_circle_group.rotation.y -= 0.005;
+    requestAnimationFrame(this.animate);
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  /**
+   * 球をクリックした時のイベント
+   * @param {Object} event イベントオブジェクト
+   */
+  onClickSphereAndText = (event) => {
+
+    // master_circle_groupに含まれているすべてのオブジェクトを配列として取得する
+    const allObjectsArray = this.getAllChildObjects(this.master_circle_group);
+
+    // クリックされた位置からレイを生成
+    const vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5).unproject(this.camera);
+
+    // レイとオブジェクトの交差を調べる
+    const raycaster = new THREE.Raycaster(this.camera.position, vector.sub(this.camera.position).normalize());
+
+    // 交差したオブジェクトを取得
+    const intersects = raycaster.intersectObjects(allObjectsArray);
+
+    if (intersects.length > 0) {
+      // クリックした一番手前のオブジェクトがintersects[0]となる
+      const getting_id = intersects[0].object.book_id;
+      // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
+      const book_obj = this.books.find(book => book.book_id === getting_id);
+      console.log(book_obj)
+    }
+  }
+
+  /**
+   * 全ての子オブジェクトを配列として取得する
+   * @param {THREE.Group} group 全ての子オブジェクトを取得したい Three.js Group
+   * @returns {Array} THREE.Group内に含まれる全ての子オブジェクトを含む配列
+   */
+  getAllChildObjects = (group) => {
+    const objects = [];
+    // グループの直下の子オブジェクトを配列に追加する
+    group.children.forEach((child) => {
+      objects.push(child);
+      // 孫のオブジェクトがある場合は、再帰的に配下の全ての子オブジェクトを配列に追加する
+      if (child.children) {
+        objects.push(...this.getAllChildObjects(child));
+      }
+    });
+    return objects;
   }
 }
 

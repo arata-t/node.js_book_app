@@ -14,12 +14,16 @@ class WireframeSphere {
 
   /**
    * ワイヤーフレームの球体を作成する
+   * @param {object} 本の情報
    * @returns {THREE.Mesh} ワイヤーフレームの球体
    */
-  generateSphereMesh () {
+  generateSphereMesh (book) {
     this.geometry = new THREE.SphereGeometry(this.radius, this.widthSegments, this.heightSegments);
     this.material = new THREE.MeshBasicMaterial({ color: this.color, wireframe: true });
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+    // クリック処理の際、球体を識別するためにnameとbook_idプロパティを付与する
+    this.mesh.name = book.book_title;
+    this.mesh.book_id = book.book_id;
     return this.mesh;
   }
 }

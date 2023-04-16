@@ -14,12 +14,11 @@ class TextAndSphere {
 
   /**
    * 環状テキストメッシュとワイヤーフレームの球体のグループを作成する
-   * @param {array} books 本に関する情報の配列
+   * @param {object} book 本に関する情報
    * @param {object} font fontの情報
-   * @param {number} current_num 繰り返し処理の現在番号
    * @returns {Promise<THREE.Group>} 環状テキストメッシュとワイヤーフレームの球体のグループ
    */
-  async generateTextAndSphere (books, font, current_num) {
+  async generateTextAndSphere (book, font) {
 
     // textAndSphereGroupをグループインスタンス化
     this.text_and_sphere_group = new THREE.Group();
@@ -27,15 +26,14 @@ class TextAndSphere {
     /**
      * 環状テキストメッシュを作成
      */
-    const circular_text_mesh = await new CircularTextMesh().generateTextMesh(books, font, current_num);
+    const circular_text_mesh = await new CircularTextMesh().generateTextMesh(book, font);
     this.text_and_sphere_group.add(circular_text_mesh);
 
     /**
      * ワイヤーフレームの球体を作成
      */
-    const wireframe_sphere = new WireframeSphere().generateSphereMesh();
+    const wireframe_sphere = new WireframeSphere().generateSphereMesh(book);
     this.text_and_sphere_group.add(wireframe_sphere);
-
     return this.text_and_sphere_group;
   }
 
