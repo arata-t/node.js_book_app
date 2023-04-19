@@ -1,9 +1,9 @@
 "use strict";
 
 import TextAndSphere from "./TextAndSphere.js";
-import WireframeSphere from "./WireframeSphere.js"
-import Particle from "./Particle.js"
-import Camera from "./Camera.js"
+import WireframeSphere from "./WireframeSphere.js";
+import Particle from "./Particle.js";
+import Camera from "./Camera.js";
 
 /**
  * viewer_frontから呼び出1されるviewのメイン処理クラス
@@ -177,7 +177,7 @@ class ViewerMain {
    * 球をクリックした時のイベント
    * @param {Object} event イベントオブジェクト
    */
-  onClickSphereAndText = (event) => {
+  onClickSphereAndText = async (event) => {
 
     // master_circle_groupに含まれているすべてのオブジェクトを配列として取得する
     const allObjectsArray = this.getAllChildObjects(this.master_circle_group);
@@ -196,44 +196,9 @@ class ViewerMain {
       const getting_id = intersects[0].object.book_id;
       // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
       const book_obj = this.books.find(book => book.book_id === getting_id);
-      console.log(book_obj)
 
-      var presetPositions = {
-        first: {
-          position: new THREE.Vector3(0, 6000, 0),
-          target: new THREE.Vector3(0, 0, 0),
-        },
-        second: {
-          position: new THREE.Vector3(0, -3000, 0),
-          // target: new THREE.Vector3(0, 0, 0),
-        },
-        left: {
-          position: new THREE.Vector3(-500, 0, 0),
-          target: new THREE.Vector3(0, 0, 0),
-        },
-        // 他にも定義可能
-      };
+      await this.startTween()
 
-      // 予め定義された位置のオブジェクトを取得
-      // const setPosition = presetPositions['first'];
-      // Tween.jsを使用して、cameraの位置を変化させる
-      const tween_first = new TWEEN.Tween([this.camera.position, this.camera.target])
-        .to([presetPositions['first'].position, presetPositions['first'].target], 1500)
-        .easing(TWEEN.Easing.Sinusoidal.InOut)
-        .onUpdate(() => {
-          this.camera.lookAt(presetPositions['first'].target);
-        });
-      const tween_second = new TWEEN.Tween([this.camera.position, this.camera.target])
-        .to([presetPositions['second'].position, presetPositions['second'].target], 1000)
-        .easing(TWEEN.Easing.Sinusoidal.InOut)
-      // .onUpdate(() => {
-      //   this.camera.lookAt(presetPositions['first'].target);
-      // });
-      tween_first.chain(tween_second);
-
-      tween_first.start();
-
-      // this.moveCameraToPresetPositionSmoothly(2000, presetPositions)
     }
   }
 
@@ -254,6 +219,32 @@ class ViewerMain {
     });
     return objects;
   }
+
+  /**
+   * Tweenアニメーションを起動する
+   */
+  async startTween () {
+    const first_position = new THREE.Vector3(0, 6000, 0);
+    const first_target = new THREE.Vector3(0, 0, 0)
+    const second_position = new THREE.Vector3(0, -3000, 0)
+
+    // 最初のTweenアニメーション
+    const tween_first = new TWEEN.Tween([this.camera.position, this.camera.target])
+      .to([first_position, first_target], 1500)
+      .easing(TWEEN.Easing.Sinusoidal.InOut)
+      .onUpdate(() => {
+        this.camera.lookAt(first_target);
+      });
+    // 次のTweenアニメーション
+    const tween_second = new TWEEN.Tween([this.camera.position, this.camera.target])
+      .to([second_position, null], 1000)
+      .easing(TWEEN.Easing.Sinusoidal.InOut)
+    tween_first.chain(tween_second);
+
+    // Tweenを起動する
+    tween_first.start();
+  }
+
 }
 
 export { ViewerMain as default };

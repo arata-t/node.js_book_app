@@ -5,14 +5,17 @@
  */
 class Camera {
   constructor() {
-    /** @type {number} fov 視野角 */
+    /** @type {number} 視野角 */
     this.fov = 75;
 
-    /**@type {number} near カメラが映す近傍の距離 */
+    /**@type {number} カメラが映す近傍の距離 */
     this.near = 0.1;
 
-    /**@type {number} far カメラが映す遠方の距離 */
+    /**@type {number} カメラが映す遠方の距離 */
     this.far = 20000;
+
+    /**@type {THREE.PerspectiveCamera} カメラインスタンス */
+    this.camera = null;
   }
 
   /**
@@ -21,14 +24,14 @@ class Camera {
    * @returns {Promise<THREE.PerspectiveCamera>}
    */
   async generateCamera (radius) {
-    const camera = new THREE.PerspectiveCamera(this.fov, window.innerWidth / window.innerHeight, this.near, this.far)
+    this.camera = new THREE.PerspectiveCamera(this.fov, window.innerWidth / window.innerHeight, this.near, this.far)
 
     // カメラの位置は球体が周回する半径の外側
-    camera.position.z = radius + 1000;
+    this.camera.position.z = radius + 1000;
     // カメラの向きは中心
-    camera.target = new THREE.Vector3(0, 0, 0);
+    this.camera.target = new THREE.Vector3(0, 0, 0);
 
-    return camera;
+    return this.camera;
   }
 
   /**
