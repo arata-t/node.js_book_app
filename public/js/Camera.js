@@ -6,7 +6,7 @@
 class Camera {
   constructor() {
     /** @type {number} 視野角 */
-    this.fov = 75;
+    this.fov = 90;
 
     /**@type {number} カメラが映す近傍の距離 */
     this.near = 0.1;

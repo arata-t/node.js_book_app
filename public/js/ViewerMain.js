@@ -4,6 +4,8 @@ import TextAndSphere from "./TextAndSphere.js";
 import WireframeSphere from "./WireframeSphere.js";
 import Particle from "./Particle.js";
 import Camera from "./Camera.js";
+import TweenAnimation from "./TweenAnimation.js";
+import ContentTextObject from "./ContentTextObject.js"
 
 /**
  * viewer_frontから呼び出1されるviewのメイン処理クラス
@@ -197,8 +199,32 @@ class ViewerMain {
       // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
       const book_obj = this.books.find(book => book.book_id === getting_id);
 
-      await this.startTween()
+      // TweenAnimationオブジェクトを作成
+      const tween_animation = new TweenAnimation(this.camera);
+      // TweenAnimationを実行
+      tween_animation.startTween();
 
+      // 関数実行開始時間を取得（ログ）
+      const startTime = performance.now();
+
+      // TweenAnimationの完了を待ってから、テキストグループを作成する
+      setTimeout(async () => {
+        // textObjectインスタンスを作成
+        const textObject = new ContentTextObject();
+
+        // テキストグループを作成
+        const text_group = await textObject.generateText(this.font, book_obj.contents);
+
+        // 関数実行修正時間を取得（ログ）
+        const endTime = performance.now();
+
+        // テキスト作成時間をログに出力
+        console.log(`textCreateTime: ${endTime - startTime - (tween_animation.tween_first_duration + tween_animation.tween_second_duration)} ms`);
+
+        // シーンにテキストグループを追加
+        this.scene.add(text_group);
+
+      }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
     }
   }
 
@@ -220,32 +246,6 @@ class ViewerMain {
     return objects;
   }
 
-  /**
-   * Tweenアニメーションを起動する
-   */
-  async startTween () {
-    const first_position = new THREE.Vector3(0, 6000, 0);
-    const first_target = new THREE.Vector3(0, 0, 0)
-    const second_position = new THREE.Vector3(0, -3000, 0)
-
-    // 最初のTweenアニメーション
-    const tween_first = new TWEEN.Tween([this.camera.position, this.camera.target])
-      .to([first_position, first_target], 1500)
-      .easing(TWEEN.Easing.Sinusoidal.InOut)
-      .onUpdate(() => {
-        this.camera.lookAt(first_target);
-      });
-    // 次のTweenアニメーション
-    const tween_second = new TWEEN.Tween([this.camera.position, this.camera.target])
-      .to([second_position, null], 1000)
-      .easing(TWEEN.Easing.Sinusoidal.InOut)
-    tween_first.chain(tween_second);
-
-    // Tweenを起動する
-    tween_first.start();
-  }
-
 }
 
 export { ViewerMain as default };
-

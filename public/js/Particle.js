@@ -45,9 +45,9 @@ class Particle {
 
     // パーティクルが配置される範囲を取得し、中心に移動させる
     const bounding_area = new THREE.Box3().setFromObject(particle); // パーティクルが配置される範囲
-    const center = bounding_area.getCenter(new THREE.Vector3()); // 中心座標
+    const center = bounding_area.getCenter(new THREE.Vector3()); // パーティクルの中心座標
     // モデルの位置を中心に移動する
-    particle.position.sub(center);// model.positionの座標が、centerの座標を引いた座標に更新されます。
+    particle.position.sub(center);// model.positionの座標が、centerの座標を引いた座標に更新される。
 
     return particle;
   }
