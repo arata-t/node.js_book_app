@@ -25,7 +25,7 @@ class TweenAnimation {
     const first_target = new THREE.Vector3(0, 0, 0);
 
     /** @type{THREE.Vector3} 2番目のTweenアニメーションの終了位置 */
-    const second_position = new THREE.Vector3(0, this.tween_second_duration, 0);
+    const second_position = new THREE.Vector3(0, -2000, 0);
 
     // 最初のTweenアニメーション
     const tween_first = new TWEEN.Tween([this.camera.position, this.camera.target])

@@ -224,7 +224,12 @@ class ViewerMain {
         // シーンにテキストグループを追加
         this.scene.add(text_group);
 
+        // アニメーションを起動
+        textObject.animate();
+
       }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
+
+
     }
   }
 

@@ -13,6 +13,8 @@ class ContentTextObject {
     this.line_width = 15;
     /** @type {number} フォントサイズ */
     this.font_size = 50;
+    /** @type {THREE.Group} */
+    this.text_group = null;
   }
 
   async generateText (font, text) {
@@ -23,7 +25,7 @@ class ContentTextObject {
     // マテリアルを作成
     const material = new THREE.MeshBasicMaterial({ color: 'yellow' });
     // グループを作成
-    const text_group = new THREE.Group();
+    this.text_group = new THREE.Group();
 
     for (let i = 0; i < textLines.length; i++) {
       const line = textLines[i];
@@ -40,21 +42,29 @@ class ContentTextObject {
       // フォントサイズの1.5倍の行間を設ける
       lineObject.position.y = -i * this.font_size * 1.5;
       // グループに1行分のテキストMeshを追加
-      text_group.add(lineObject);
+      this.text_group.add(lineObject);
     }
 
     // 上方からの視線で見るために、テキストを回転する
-    text_group.rotation.z = Math.PI;
-    text_group.rotation.y = Math.PI;
+    this.text_group.rotation.z = Math.PI;
+    this.text_group.rotation.y = Math.PI;
 
     // テキストオブジェクトを中心配置にし、位置を下げる
-    text_group.position.set(
-      -new THREE.Box3().setFromObject(text_group).getCenter(new THREE.Vector3()).x,
-      0,
+    this.text_group.position.set(
+      -new THREE.Box3().setFromObject(this.text_group).getCenter(new THREE.Vector3()).x,
+      -2200,
       300
     );
 
-    return text_group;
+    return this.text_group;
+  }
+
+  /**
+   * text_groupのy方向の位置を減少する関数
+   */
+  animate = () => {
+    this.text_group.position.y -= 1;
+    requestAnimationFrame(this.animate);
   }
 }
 
