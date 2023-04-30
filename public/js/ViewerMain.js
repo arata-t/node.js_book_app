@@ -1,8 +1,11 @@
 "use strict";
 
 import TextAndSphere from "./TextAndSphere.js";
-import WireframeSphere from "./WireframeSphere.js"
-import Particle from "./Particle.js"
+import WireframeSphere from "./WireframeSphere.js";
+import Particle from "./Particle.js";
+import Camera from "./Camera.js";
+import TweenAnimation from "./TweenAnimation.js";
+import ContentTextObject from "./ContentTextObject.js"
 
 /**
  * viewer_frontから呼び出1されるviewのメイン処理クラス
@@ -96,16 +99,11 @@ class ViewerMain {
     this.scene.add(particle);
 
     // カメラを作成
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 20000);
+    const cameraInst = new Camera();
+    this.camera = await cameraInst.generateCamera(radius);
 
-    // カメラを移動
-    this.camera.position.z = radius + 1000;
-
-    // カメラコントローラーを作成
-    const orbit = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-    // 滑らかにカメラコントローラーを制御する
-    orbit.enableDamping = true;
-    orbit.dampingFactor = 0.2;
+    // カメラ制御を追加
+    const orbit = await cameraInst.generateOrbitControls(this.camera, this.renderer.domElement);
 
     // アニメーションを実行
     this.animate();
@@ -173,6 +171,7 @@ class ViewerMain {
   animate = () => {
     this.master_circle_group.rotation.y -= 0.005;
     requestAnimationFrame(this.animate);
+    TWEEN.update(); // アニメーション内で呼び出さないと起動しない。
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -180,7 +179,7 @@ class ViewerMain {
    * 球をクリックした時のイベント
    * @param {Object} event イベントオブジェクト
    */
-  onClickSphereAndText = (event) => {
+  onClickSphereAndText = async (event) => {
 
     // master_circle_groupに含まれているすべてのオブジェクトを配列として取得する
     const allObjectsArray = this.getAllChildObjects(this.master_circle_group);
@@ -199,7 +198,33 @@ class ViewerMain {
       const getting_id = intersects[0].object.book_id;
       // クリックした球のbook_idと同じbook_idを持つオブジェクトを取得する
       const book_obj = this.books.find(book => book.book_id === getting_id);
-      console.log(book_obj)
+
+      // TweenAnimationオブジェクトを作成
+      const tween_animation = new TweenAnimation(this.camera);
+      // TweenAnimationを実行
+      tween_animation.startTween();
+
+      // 関数実行開始時間を取得（ログ）
+      const startTime = performance.now();
+
+      // TweenAnimationの完了を待ってから、テキストグループを作成する
+      setTimeout(async () => {
+        // textObjectインスタンスを作成
+        const textObject = new ContentTextObject();
+
+        // テキストグループを作成
+        const text_group = await textObject.generateText(this.font, book_obj.contents);
+
+        // 関数実行修正時間を取得（ログ）
+        const endTime = performance.now();
+
+        // テキスト作成時間をログに出力
+        console.log(`textCreateTime: ${endTime - startTime - (tween_animation.tween_first_duration + tween_animation.tween_second_duration)} ms`);
+
+        // シーンにテキストグループを追加
+        this.scene.add(text_group);
+
+      }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
     }
   }
 
@@ -220,6 +245,7 @@ class ViewerMain {
     });
     return objects;
   }
+
 }
 
 export { ViewerMain as default };
