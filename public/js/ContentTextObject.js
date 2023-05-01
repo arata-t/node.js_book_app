@@ -45,15 +45,11 @@ class ContentTextObject {
       this.text_group.add(lineObject);
     }
 
-    // 上方からの視線で見るために、テキストを回転する
-    this.text_group.rotation.z = Math.PI;
-    this.text_group.rotation.y = Math.PI;
-
-    // テキストオブジェクトを中心配置にし、位置を下げる
+    // テキストオブジェクトを中心配置にし、位置を調整
     this.text_group.position.set(
       -new THREE.Box3().setFromObject(this.text_group).getCenter(new THREE.Vector3()).x,
-      -2200,
-      300
+      3200,
+      -300
     );
 
     return this.text_group;
@@ -63,7 +59,7 @@ class ContentTextObject {
    * text_groupのy方向の位置を減少する関数
    */
   animate = () => {
-    this.text_group.position.y -= 1;
+    this.text_group.position.y += 1;
     requestAnimationFrame(this.animate);
   }
 }

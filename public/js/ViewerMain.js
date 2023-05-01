@@ -84,8 +84,8 @@ class ViewerMain {
     document.getElementById("viewer_front").appendChild(this.renderer.domElement);
 
     // 空間の中心に3D起点を追加
-    const center_axes = new THREE.AxesHelper(100);
-    this.scene.add(center_axes);
+    // const center_axes = new THREE.AxesHelper(100);
+    // this.scene.add(center_axes);
 
     // 球体全体を統括するグループをシーンに追加
     this.master_circle_group = new THREE.Group();
@@ -247,11 +247,10 @@ class ViewerMain {
           // tweenで元の視覚に戻る
           await tween_animation.returnTween(
             await this.getRadius()
-          )
+          );
 
-          // text_groupを消す
-          this.scene.remove(text_group);
-
+          // アニメーションのタイミングに合わせてtext_groupを消す
+          setTimeout(async () => { this.scene.remove(text_group) }, tween_animation.return_first_duration);
         });
 
       }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
