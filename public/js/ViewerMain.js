@@ -133,24 +133,19 @@ class ViewerMain {
    */
   generateTextAndSphereGroup = async () => {
 
-    /** @type {number} book_num ブックオブジェクトの数 */
-    const book_num = this.books.length;
-
     // 球体同士の間隔から半径を求める
-    const distance = new WireframeSphere().radius * 10; // 球体同士の間隔
-    /** @type {number} radius 円の半径 */
-    const radius = distance * (book_num / (2 * Math.PI));
+    const radius = await this.getRadius();
 
-    for (let current_num = 0; current_num < book_num; current_num++) {
+    for (let current_num = 0; current_num < this.books.length; current_num++) {
 
-      // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
+      //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
       const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books[current_num], this.font);
 
       // 縦の円状に配置するための座標を計算
-      const theta = (current_num / book_num) * Math.PI * 2; // 角度
-      const x = radius * Math.cos(theta); // y座標
-      const z = radius * Math.sin(theta); // z座標
+      const theta = (current_num / this.books.length) * Math.PI * 2; // 角度
+      const x = radius * Math.cos(theta);
+      const z = radius * Math.sin(theta);
 
       // textObjectの位置を設定
       text_and_sphere.position.setX(x);
@@ -163,6 +158,17 @@ class ViewerMain {
       textAndSphereClass.animate();
     }
     return radius;
+  }
+
+  /**
+   * 環の半径を取得する
+   * @returns radius
+   */
+  getRadius = async () => {
+    const distance = new WireframeSphere().radius * 10; // 球体同士の間隔
+    /** @type {number} radius 円の半径 */
+    const radius = distance * (this.books.length / (2 * Math.PI));
+    return radius
   }
 
   /**
@@ -227,8 +233,28 @@ class ViewerMain {
         // アニメーションを起動
         textObject.animate();
 
-      }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
+        // returnアイコンを取得
+        const turn_buck_icon = document.getElementById("turn_buck_icon");
 
+        // returnアイコンを表示する
+        turn_buck_icon.style.display = "block";
+
+        // returnアイコンをクリックした時の処理
+        turn_buck_icon.addEventListener("click", async () => {
+          // returnアイコンを消す
+          turn_buck_icon.style.display = "none";
+
+          // tweenで元の視覚に戻る
+          await tween_animation.returnTween(
+            await this.getRadius()
+          )
+
+          // text_groupを消す
+          this.scene.remove(text_group);
+
+        });
+
+      }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
 
     }
   }
