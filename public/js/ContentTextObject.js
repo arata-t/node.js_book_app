@@ -45,11 +45,11 @@ class ContentTextObject {
       this.text_group.add(lineObject);
     }
 
-    // テキストオブジェクトを中心配置にし、位置を調整
+    // テキストオブジェクトを中央に配置し、アニメーション開始位置を調整
     this.text_group.position.set(
-      -new THREE.Box3().setFromObject(this.text_group).getCenter(new THREE.Vector3()).x,
-      3200,
-      -300
+      -new THREE.Box3().setFromObject(this.text_group).getCenter(new THREE.Vector3()).x, //x:中央に寄せる
+      3200, //y:アニメーションの開始時の位置
+      -300, //z:カメラの下になるように位置を調整
     );
 
     return this.text_group;

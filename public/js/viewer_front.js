@@ -11,3 +11,4 @@ await viewer.init();
 
 // ビュアーを起動した後にクリックイベントを読み込ませる
 document.addEventListener('mousedown', viewer.onClickSphereAndText, false);
+document.getElementById("turn_buck_icon").addEventListener('click', viewer.onClickReturn, false);

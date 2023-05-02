@@ -34,6 +34,9 @@ class ViewerMain {
      */
     this.master_circle_group = null;
 
+    /** @type {THREE.Group} 本の内容のテキストオブジェクト */
+    this.text_content
+
   }
 
   /**
@@ -213,45 +216,29 @@ class ViewerMain {
       // 関数実行開始時間を取得（ログ）
       const startTime = performance.now();
 
-      // TweenAnimationの完了を待ってから、テキストグループを作成する
+      // tween_animationの完了を待ってから、テキストグループを作成する
       setTimeout(async () => {
         // textObjectインスタンスを作成
         const textObject = new ContentTextObject();
 
-        // テキストグループを作成
-        const text_group = await textObject.generateText(this.font, book_obj.contents);
+        // 本の内容のテキストオブジェクトを作成
+        this.text_content = await textObject.generateText(this.font, book_obj.contents);
 
-        // 関数実行修正時間を取得（ログ）
+        // （ログ）関数実行修正時間を取得
         const endTime = performance.now();
 
-        // テキスト作成時間をログに出力
+        // （ログ）テキスト作成時間を出力
         console.log(`textCreateTime: ${endTime - startTime - (tween_animation.tween_first_duration + tween_animation.tween_second_duration)} ms`);
 
-        // シーンにテキストグループを追加
-        this.scene.add(text_group);
+        // シーンに本の内容のテキストオブジェクトを追加
+        this.scene.add(this.text_content);
 
         // アニメーションを起動
         textObject.animate();
 
-        // returnアイコンを取得
-        const turn_buck_icon = document.getElementById("turn_buck_icon");
-
         // returnアイコンを表示する
+        const turn_buck_icon = document.getElementById("turn_buck_icon");
         turn_buck_icon.style.display = "block";
-
-        // returnアイコンをクリックした時の処理
-        turn_buck_icon.addEventListener("click", async () => {
-          // returnアイコンを消す
-          turn_buck_icon.style.display = "none";
-
-          // tweenで元の視覚に戻る
-          await tween_animation.returnTween(
-            await this.getRadius()
-          );
-
-          // アニメーションのタイミングに合わせてtext_groupを消す
-          setTimeout(async () => { this.scene.remove(text_group) }, tween_animation.return_first_duration);
-        });
 
       }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
 
@@ -274,6 +261,25 @@ class ViewerMain {
       }
     });
     return objects;
+  }
+
+  /**
+   * returnアイコンをクリックした時のイベント
+   */
+  onClickReturn = async (event) => {
+    // returnアイコンを消す
+    event.currentTarget.style.display = "none";
+
+    // TweenAnimationオブジェクトを作成
+    const tween_animation = new TweenAnimation(this.camera);
+
+    // tweenで元の視覚に戻る
+    await tween_animation.returnTween(
+      await this.getRadius()
+    );
+
+    // アニメーションのタイミングに合わせて本の内容のテキストオブジェクトを消す
+    setTimeout(async () => { this.scene.remove(this.text_content) }, tween_animation.return_first_duration);
   }
 
 }
