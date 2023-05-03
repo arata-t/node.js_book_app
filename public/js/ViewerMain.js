@@ -34,6 +34,8 @@ class ViewerMain {
      */
     this.master_circle_group = null;
 
+    /** @type {THREE.Group} 本の内容のテキストオブジェクト */
+    this.text_content = null;
   }
 
   /**
@@ -57,7 +59,6 @@ class ViewerMain {
 
       // 画面の拡大縮小に対応
       window.addEventListener('resize', this.onResize, false);
-
     })
   }
 
@@ -84,8 +85,8 @@ class ViewerMain {
     document.getElementById("viewer_front").appendChild(this.renderer.domElement);
 
     // 空間の中心に3D起点を追加
-    const center_axes = new THREE.AxesHelper(100);
-    this.scene.add(center_axes);
+    // const center_axes = new THREE.AxesHelper(100);
+    // this.scene.add(center_axes);
 
     // 球体全体を統括するグループをシーンに追加
     this.master_circle_group = new THREE.Group();
@@ -133,24 +134,19 @@ class ViewerMain {
    */
   generateTextAndSphereGroup = async () => {
 
-    /** @type {number} book_num ブックオブジェクトの数 */
-    const book_num = this.books.length;
-
     // 球体同士の間隔から半径を求める
-    const distance = new WireframeSphere().radius * 10; // 球体同士の間隔
-    /** @type {number} radius 円の半径 */
-    const radius = distance * (book_num / (2 * Math.PI));
+    const radius = await this.getRadius();
 
-    for (let current_num = 0; current_num < book_num; current_num++) {
+    for (let current_num = 0; current_num < this.books.length; current_num++) {
 
-      // //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
+      //環状テキストメッシュとワイヤーフレームの球体のグループを作成しシーンに追加
       const textAndSphereClass = new TextAndSphere();
       const text_and_sphere = await textAndSphereClass.generateTextAndSphere(this.books[current_num], this.font);
 
       // 縦の円状に配置するための座標を計算
-      const theta = (current_num / book_num) * Math.PI * 2; // 角度
-      const x = radius * Math.cos(theta); // y座標
-      const z = radius * Math.sin(theta); // z座標
+      const theta = (current_num / this.books.length) * Math.PI * 2; // 角度
+      const x = radius * Math.cos(theta);
+      const z = radius * Math.sin(theta);
 
       // textObjectの位置を設定
       text_and_sphere.position.setX(x);
@@ -163,6 +159,17 @@ class ViewerMain {
       textAndSphereClass.animate();
     }
     return radius;
+  }
+
+  /**
+   * 環の半径を取得する
+   * @returns radius
+   */
+  getRadius = async () => {
+    const distance = new WireframeSphere().radius * 10; // 球体同士の間隔
+    /** @type {number} radius 円の半径 */
+    const radius = distance * (this.books.length / (2 * Math.PI));
+    return radius
   }
 
   /**
@@ -207,22 +214,29 @@ class ViewerMain {
       // 関数実行開始時間を取得（ログ）
       const startTime = performance.now();
 
-      // TweenAnimationの完了を待ってから、テキストグループを作成する
+      // tween_animationの完了を待ってから、テキストグループを作成する
       setTimeout(async () => {
         // textObjectインスタンスを作成
         const textObject = new ContentTextObject();
 
-        // テキストグループを作成
-        const text_group = await textObject.generateText(this.font, book_obj.contents);
+        // 本の内容のテキストオブジェクトを作成
+        this.text_content = await textObject.generateText(this.font, book_obj.contents);
 
-        // 関数実行修正時間を取得（ログ）
+        // （ログ）関数実行修正時間を取得
         const endTime = performance.now();
 
-        // テキスト作成時間をログに出力
+        // （ログ）テキスト作成時間を出力
         console.log(`textCreateTime: ${endTime - startTime - (tween_animation.tween_first_duration + tween_animation.tween_second_duration)} ms`);
 
-        // シーンにテキストグループを追加
-        this.scene.add(text_group);
+        // シーンに本の内容のテキストオブジェクトを追加
+        this.scene.add(this.text_content);
+
+        // アニメーションを起動
+        textObject.animate();
+
+        // returnアイコンを表示する
+        const turn_buck_icon = document.getElementById("turn_buck_icon");
+        turn_buck_icon.style.display = "block";
 
       }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
     }
@@ -246,6 +260,24 @@ class ViewerMain {
     return objects;
   }
 
+  /**
+   * returnアイコンをクリックした時のイベント
+   */
+  onClickReturn = async (event) => {
+    // returnアイコンを消す
+    event.currentTarget.style.display = "none";
+
+    // TweenAnimationオブジェクトを作成
+    const tween_animation = new TweenAnimation(this.camera);
+
+    // tweenで元の視覚に戻る
+    await tween_animation.returnTween(
+      await this.getRadius()
+    );
+
+    // アニメーションのタイミングに合わせて本の内容のテキストオブジェクトを消す
+    setTimeout(async () => { this.scene.remove(this.text_content) }, tween_animation.return_first_duration);
+  }
 }
 
 export { ViewerMain as default };
