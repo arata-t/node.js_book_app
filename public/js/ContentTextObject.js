@@ -13,7 +13,7 @@ class ContentTextObject {
     this.line_width = 15;
     /** @type {number} フォントサイズ */
     this.font_size = 50;
-    /** @type {THREE.Group} */
+    /** @type {THREE.Group} テキストグループ */
     this.text_group = null;
   }
 
