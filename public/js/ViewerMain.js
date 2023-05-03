@@ -35,8 +35,7 @@ class ViewerMain {
     this.master_circle_group = null;
 
     /** @type {THREE.Group} 本の内容のテキストオブジェクト */
-    this.text_content
-
+    this.text_content = null;
   }
 
   /**
@@ -60,7 +59,6 @@ class ViewerMain {
 
       // 画面の拡大縮小に対応
       window.addEventListener('resize', this.onResize, false);
-
     })
   }
 
@@ -241,7 +239,6 @@ class ViewerMain {
         turn_buck_icon.style.display = "block";
 
       }, tween_animation.tween_first_duration + tween_animation.tween_second_duration);
-
     }
   }
 
@@ -281,7 +278,6 @@ class ViewerMain {
     // アニメーションのタイミングに合わせて本の内容のテキストオブジェクトを消す
     setTimeout(async () => { this.scene.remove(this.text_content) }, tween_animation.return_first_duration);
   }
-
 }
 
 export { ViewerMain as default };

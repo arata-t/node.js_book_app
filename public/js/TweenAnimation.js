@@ -23,6 +23,9 @@ class TweenAnimation {
 
   }
 
+  /**
+   * 球体をクリックした時のTweenアニメーション
+   */
   async startTween () {
 
     // 最初のTweenアニメーション
