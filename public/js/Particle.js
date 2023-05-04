@@ -9,10 +9,10 @@ class Particle {
     this.count = 18000;
 
     /** @type{ number } パーティクルの乱数を生成する範囲 */
-    this.random_particle_range = 20000;
+    this.random_particle_range = 30000;
 
     /** @type{ number } ドットの大きさ */
-    this.particle_size = 10;
+    this.particle_size = 20;
   }
 
   /**
@@ -30,14 +30,22 @@ class Particle {
       color_array[i] = Math.random(); // 配色は0~1の値で変化する
     }
     // パーティクルの配列にランダムのpositionをセットする
-    particle_geometry.setAttribute("position", new THREE.BufferAttribute(particle_array, 3))
+    particle_geometry.setAttribute("position", new THREE.BufferAttribute(particle_array, 3));
     // 色の配列にランダムのpositionをセットする(BufferGeometryの頂点にcolorをsetすると色が適用される)
-    particle_geometry.setAttribute("color", new THREE.BufferAttribute(color_array, 3))
+    particle_geometry.setAttribute("color", new THREE.BufferAttribute(color_array, 3));
+
+    // テクスチャを読み込ませる
+    const textureLoader = new THREE.TextureLoader();
+    const particleTexture = textureLoader.load('./textures/5.png');
 
     // マテリアルの作成
     const particle_material = new THREE.PointsMaterial({
       size: this.particle_size,
       vertexColors: true, //頂点の色を有効にするためのプロパティ
+      alphaMap: particleTexture, //読み込んだテクスチャをmapする
+      transparent: true, //透過を有効化する
+      depthWrite: false, //ポイント要素が描画された場所に他のオブジェクトを描画できなくする
+      blending: THREE.AdditiveBlending,
     })
 
     // パーティクルを作成
