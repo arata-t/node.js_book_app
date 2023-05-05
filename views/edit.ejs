@@ -23,17 +23,26 @@
         <p class="form-label">本のタイトル</p>
         <input type="text" name="book_title" maxlength="50" value=<%=book.book_title%>>
 
+        <p class="form-label">著者</p>
+        <input type="text" name="book_author" maxlength="20" value=<%=book.book_author%>>
+
         <p class="form-label">読了日</p>
         <input type="date" name="finished_date" value=<%=book.finished_date%>>
 
         <p class="form-label">分類</p>
-        <input type="text" name="classification" maxlength="20" value=<%=book.classification%> >
+        <select name="classification">
+          <option value="小説" <%=book.classification==="小説" ? "selected" : "" %>>小説</option>
+          <option value="ビジネス・政治・経済" <%=book.classification==="ビジネス・政治・経済" ? "selected" : "" %>>ビジネス・政治・経済</option>
+          <option value="実用書" <%=book.classification==="実用書" ? "selected" : "" %>>実用書</option>
+          <option value="参考書" <%=book.classification==="参考書" ? "selected" : "" %>>参考書</option>
+          <option value="その他" <%=book.classification==="その他" ? "selected" : "" %>>その他</option>
+        </select>
 
         <p class="form-label">気になる一言</p>
         <input type="text" name="worried_word" maxlength="50" class="worried_word" value=<%=book.worried_word%>>
 
         <p class="form-label">内容</p>
-        <textarea name="contents" maxlength="500" class="text_contents"><%=book.contents%></textarea>
+        <textarea name="contents" maxlength="2500" class="text_contents"><%=book.contents%></textarea>
 
         <br>
         <input type="submit" class="form_button" value="編集する">
