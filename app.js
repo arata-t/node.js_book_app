@@ -117,7 +117,7 @@ app.post('/delete/:book_id', (req, res) => {
     [req.params.book_id],
     (error, results) => {
       if (error) {
-        consƒole.log('delete' + error);
+        console.log('delete' + error);
         return;
       } else {
         console.log('delete' + results);
