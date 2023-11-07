@@ -1,4 +1,6 @@
 
+require('dotenv').config();
+
 const express = require("express");
 const app = express();
 const mysql = require('mysql');
@@ -8,10 +10,19 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'localhost',
-  password: 'Itotaniguro@01',
-  database: 'book_app'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE
+});
+
+// MySQL データベースへの接続
+connection.connect(err => {
+  if (err) {
+    console.error('MySQL接続エラー: ' + err.stack);
+    return;
+  }
+  console.log('MySQLに接続しました。ID: ' + connection.threadId);
 });
 
 // ejsテンプレートエンジンを設定
