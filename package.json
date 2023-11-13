@@ -4,6 +4,7 @@
   "description": "1. npm install ejs 2. npm install express 3.",
   "main": "app.js",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.8",
     "express": "^4.18.2",

@@ -5,9 +5,14 @@ const express = require("express");
 const app = express();
 const mysql = require('mysql');
 const moment = require('moment');
+const cors = require('cors'); // CORSミドルウェアを追加
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
+
+// CORSミドルウェアを設定
+app.use(cors());
+
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
