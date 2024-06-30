@@ -86,7 +86,7 @@ app.get('/edit/:book_id', (req, res) => {
 app.post('/create', (req, res) => {
   console.log(req.body);
   connection.query(
-    'INSERT INTO tb_book(book_title, finished_date, classification, worried_word, contents) VALUES(?,?,?,?,?,?)',
+    'INSERT INTO tb_book(book_title, finished_date, classification, worried_word, contents, book_author) VALUES(?,?,?,?,?,?)',
     [req.body.book_title, req.body.finished_date, req.body.classification, req.body.worried_word, req.body.contents, req.body.book_author],
     (error, results) => {
       if (error) {
